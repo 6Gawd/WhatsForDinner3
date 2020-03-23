@@ -1,30 +1,33 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './Home';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import Profile from './Profile';
 import Login from './Login';
 import SignUp from './SignUp';
+import Recipes from './Recipes';
+import List from './List';
 import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
 import NavBar from './Navbar';
-import List from './List';
 
 const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <NavBar />
-          <Switch>
-            <PrivateRoute exact path="/" component={Home} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route exact path="/list" component={List} />
-          </Switch>
-        </div>
-      </Router>
-    </AuthProvider>
-  );
+	return (
+		<AuthProvider>
+			<Router>
+				<div className="App">
+					<NavBar />
+					<Switch>
+						<PrivateRoute exact path="/" component={Profile} />
+						<PrivateRoute exact path="/list" component={List} />
+						<PrivateRoute exact path="/recipes" component={Recipes} />
+						<Route exact path="/login" component={Login} />
+						<Route exact path="/signup" component={SignUp} />
+						<Route render={() => <Redirect to="/" />} />
+					</Switch>
+				</div>
+			</Router>
+		</AuthProvider>
+	);
 };
 
 export default App;
