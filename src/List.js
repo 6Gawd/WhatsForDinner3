@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
+
+import ListOfIngredients from './Ingredients/ListOfIngredients';
 import OutputSpeech from './Speech/OutputSpeech';
 import InputSpeech from './Speech/InputSpeech';
 
@@ -71,31 +73,11 @@ const List = () => {
 		setIngredient(name);
 	};
 
-	const ingredientList = ingredients.length ? (
-		ingredients.map((ingredient) => {
-			return (
-				<div key={ingredient.id}>
-					<p>{ingredient.name}</p>
-					<button
-						className="btn-small waves-effect waves-light red right"
-						type="button"
-						name="action"
-						onClick={() => deleteIngredient(ingredient.id)}
-					>
-						<i className="material-icons">x</i>
-					</button>
-				</div>
-			);
-		})
-	) : (
-		<p>No Ingredients Yet</p>
-	);
-
 	return (
 		// INGREDIENT LIST FORM
 		<div>
 			<h1 className="center-align">Your Shopping List</h1>
-			{ingredientList}
+			<ListOfIngredients ingredients={ingredients} deleteIngredient={deleteIngredient} />
 			{/* INPUT ITEM FORM */}
 			<form onSubmit={handleSubmit}>
 				<div className="main-header">
@@ -117,7 +99,5 @@ const List = () => {
 		</div>
 	);
 };
-
-// return <ul>{ingredients.map((ingredient) => <li key={ingredient.id}>{ingredient.name}</li>)}</ul>;
 
 export default List;
