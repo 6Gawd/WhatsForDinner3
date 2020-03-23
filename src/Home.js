@@ -1,13 +1,13 @@
-import React from "react";
-import app from "./base";
+import React from 'react';
+import { auth } from './base';
 
 const Home = () => {
-  return (
-    <>
-      <h1>Home</h1>
-      <button onClick={() => app.auth().signOut()}>Sign out</button>
-    </>
-  );
+	return (
+		<div>
+			<h1>Home</h1>
+			<button onClick={() => auth.signOut()}>Sign out</button>
+		</div>
+	);
 };
 
 export default Home;
