@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { auth } from './base';
+import { AuthContext } from './Auth.js';
 
-const Home = () => {
+const Profile = () => {
+	// const { currentUser } = useContext(AuthContext);
 	return (
 		<div>
 			<h1>Home</h1>
@@ -10,4 +12,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default Profile;
