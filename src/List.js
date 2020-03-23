@@ -1,14 +1,20 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
-// import OutputSpeech from './Speech/OutputSpeech';
-// import InputSpeech from './Speech/InputSpeech';
+import OutputSpeech from './Speech/OutputSpeech';
+import InputSpeech from './Speech/InputSpeech';
 
 const List = () => {
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
 	const [ ingredient, setIngredient ] = useState('');
-	// const [ name, setName ] = useState('');
+
+	useEffect(
+		() => {
+			if (currentUser) gotIngredients(currentUser.uid);
+		},
+		[ currentUser ]
+	);
 
 	const gotIngredients = async (userId) => {
 		try {
@@ -24,17 +30,6 @@ const List = () => {
 		} catch (error) {
 			console.error('No Ingredients', error);
 		}
-	};
-
-	useEffect(
-		() => {
-			if (currentUser) gotIngredients(currentUser.uid);
-		},
-		[ currentUser ]
-	);
-
-	const handleChange = (event) => {
-		setIngredient(event.target.value);
 	};
 
 	const addIngredient = async (ingredient) => {
@@ -57,6 +52,14 @@ const List = () => {
 		}
 	};
 
+	const handleChange = (event) => {
+		setIngredient(event.target.value);
+	};
+
+	const handleTranscript = (string) => {
+		setIngredient(string);
+	};
+
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		const returnedIngredient = await addIngredient({ name: ingredient, userId: currentUser.uid });
@@ -64,9 +67,9 @@ const List = () => {
 		setIngredient('');
 	};
 
-	// const startedListening = (name) => {
-	// 	this.setState({ name: name });
-	// };
+	const startedListening = (name) => {
+		setIngredient(name);
+	};
 
 	const ingredientList = ingredients.length ? (
 		ingredients.map((ingredient) => {
@@ -105,12 +108,12 @@ const List = () => {
 							<button className="btn waves-effect waves-light indigo center" type="submit" name="action">
 								Add Ingredient
 							</button>
-							{/* <OutputSpeech content={state.name} onClick={() => handleSubmit} /> */}
+							<OutputSpeech content={ingredient} onClick={() => handleSubmit} />
 						</div>
 					</div>
 				</div>
 			</form>
-			{/* <InputSpeech startedListening={startedListening} /> */}
+			<InputSpeech startedListening={startedListening} handleTranscript={handleTranscript} />
 		</div>
 	);
 };
