@@ -1,5 +1,3 @@
-# React Firebase Authentication Example
+NPM INSTALL
 
-Put your credentials to `.env`.
-
-Run `yarn start` to start application.
+NPM START
