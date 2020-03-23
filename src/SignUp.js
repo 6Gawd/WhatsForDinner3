@@ -5,45 +5,50 @@ import { auth } from './base';
 import { AuthContext } from './Auth.js';
 
 const SignUp = ({ history }) => {
-	const handleSignUp = useCallback(
-		async (event) => {
-			event.preventDefault();
-			const { email, password } = event.target.elements;
-			try {
-				await auth.createUserWithEmailAndPassword(email.value, password.value);
-				history.push('/');
-			} catch (error) {
-				alert(error);
-			}
-		},
-		[ history ]
-	);
+  const handleSignUp = useCallback(
+    async event => {
+      event.preventDefault();
+      const { email, password } = event.target.elements;
+      try {
+        await auth.createUserWithEmailAndPassword(email.value, password.value);
+        history.push('/');
+      } catch (error) {
+        alert(error);
+      }
+    },
+    [history]
+  );
 
-	const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
-	if (currentUser) {
-		return <Redirect to="/" />;
-	}
+  if (currentUser) {
+    return <Redirect to="/" />;
+  }
 
-	return (
-		<div>
-			<h1>Sign up</h1>
-			<form onSubmit={handleSignUp}>
-				<label>
-					Email
-					<input name="email" type="email" placeholder="Email" />
-				</label>
-				<label>
-					Password
-					<input name="password" type="password" placeholder="Password" />
-				</label>
-				<button type="submit">Sign Up</button>
-				<h6>
-					Already have an account? <Link to="/login">Login</Link>
-				</h6>
-			</form>
-		</div>
-	);
+  return (
+    <div className="showcase container">
+      <h1>Sign up</h1>
+      <form onSubmit={handleSignUp}>
+        <label>
+          Email
+          <input name="email" type="email" placeholder="Email" />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" placeholder="Password" />
+        </label>
+        <button
+          type="submit"
+          className="waves-effect waves-light btn-small indigo"
+        >
+          Sign Up
+        </button>
+        <h6>
+          Already have an account? <Link to="/login">Login</Link>
+        </h6>
+      </form>
+    </div>
+  );
 };
 
 export default withRouter(SignUp);
