@@ -11,7 +11,7 @@ const Login = ({ history }) => {
       const { email, password } = event.target.elements;
       try {
         await auth.signInWithEmailAndPassword(email.value, password.value);
-        history.push('/');
+        history.push('/list');
       } catch (error) {
         alert(error);
       }

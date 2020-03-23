@@ -1,67 +1,72 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
 recognition.continous = true;
 recognition.interimResults = true;
 recognition.lang = 'en-US';
 
-class InputSpeech extends Component {
-	constructor() {
-		super();
-		this.state = {
-			name: '',
-			listening: false
-		};
-	}
+const InputSpeech = ({ startedListening }) => {
+  const [name, setName] = useState('');
+  const [listening, setListening] = useState(true);
+  const [intermitten, setIntermitten] = useState('');
 
-	toggleListen = () => {
-		this.setState(
-			{
-				listening: !this.state.listening
-			},
-			this.handleListen
-		);
-	};
+  // useEffect(
+  // 	() => {
+  // 		startedListening(intermitten);
+  // 	},
+  // 	[ intermitten ]
+  // );
 
-	handleListen = () => {
-		console.log('BEFORE LISTENING');
-		if (this.state.listening) recognition.start();
-		console.log('started listening!');
-		let finalTranscript = '';
-		recognition.onresult = (event) => {
-			let interimTranscript = '';
+  const toggleListen = () => {
+    console.log('BEFORE LISTENING');
+    setListening(!listening);
+    handleListen();
+  };
 
-			for (let i = event.resultIndex; i < event.results.length; i++) {
-				const transcript = event.results[i][0].transcript;
-				if (event.results[i].isFinal) finalTranscript += transcript + ' ';
-				else interimTranscript += transcript;
-			}
-			// document.getElementById('interim').innerHTML = interimTranscript
-			// document.getElementById('final').innerHTML = finalTranscript
-			this.setState({
-				listening: !this.state.listening
-			});
-			this.props.startedListening(finalTranscript);
-		};
-		console.log('DONE LISTENING');
-	};
+  const handleListen = () => {
+    console.log('started listening!');
+    if (listening) recognition.start();
+    let finalTranscript = '';
+    recognition.onresult = event => {
+      let interimTranscript = '';
+      // console.log(event);
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        // console.log('Int TRANSCRIPT', transcript);
+        if (event.results[i].isFinal) finalTranscript += transcript + ' ';
+        else {
+          interimTranscript += transcript;
+          // props.handleTranscript(interimTranscript);
+        }
+      }
+      setIntermitten(interimTranscript);
+      setListening(!listening);
+      startedListening(finalTranscript);
+    };
+    console.log('DONE LISTENING');
+  };
 
-	render() {
-		return (
-			<div>
-				<button
-					className="btn waves-effect waves-light grey"
-					id="microphone-btn"
-					// style={button}
-					onClick={this.toggleListen}
-				/>
-				<div id="interim" />
-				<div id="final" />
-			</div>
-		);
-	}
-}
+  return (
+    <div className="center-align container">
+      <input
+        disabled
+        value={intermitten || 'Interim Transcription'}
+        id="disabled"
+      />
+      <button
+        className="btn waves-effect waves-light grey"
+        id="microphone-btn"
+        onClick={toggleListen}
+      >
+        Toggle Speech
+      </button>
+      <div id="interim" />
+      <div id="final" />
+    </div>
+  );
+};
 
 export default InputSpeech;

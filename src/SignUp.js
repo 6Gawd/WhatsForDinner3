@@ -11,7 +11,7 @@ const SignUp = ({ history }) => {
       const { email, password } = event.target.elements;
       try {
         await auth.createUserWithEmailAndPassword(email.value, password.value);
-        history.push('/');
+        history.push('/list');
       } catch (error) {
         alert(error);
       }

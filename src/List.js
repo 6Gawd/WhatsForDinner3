@@ -1,14 +1,19 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
-// import OutputSpeech from './Speech/OutputSpeech';
-// import InputSpeech from './Speech/InputSpeech';
+
+import ListOfIngredients from './Ingredients/ListOfIngredients';
+import OutputSpeech from './Speech/OutputSpeech';
+import InputSpeech from './Speech/InputSpeech';
 
 const List = () => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
-  // const [ name, setName ] = useState('');
+
+  useEffect(() => {
+    if (currentUser) gotIngredients(currentUser.uid);
+  }, [currentUser]);
 
   const gotIngredients = async userId => {
     try {
@@ -28,14 +33,6 @@ const List = () => {
     } catch (error) {
       console.error('No Ingredients', error);
     }
-  };
-
-  useEffect(() => {
-    if (currentUser) gotIngredients(currentUser.uid);
-  }, [currentUser]);
-
-  const handleChange = event => {
-    setIngredient(event.target.value);
   };
 
   const addIngredient = async ingredient => {
@@ -66,6 +63,14 @@ const List = () => {
     }
   };
 
+  const handleChange = event => {
+    setIngredient(event.target.value);
+  };
+
+  const handleTranscript = string => {
+    setIngredient(string);
+  };
+
   const handleSubmit = async event => {
     event.preventDefault();
     const returnedIngredient = await addIngredient({
@@ -76,41 +81,22 @@ const List = () => {
     setIngredient('');
   };
 
-  // const startedListening = (name) => {
-  // 	this.setState({ name: name });
-  // };
-
-  const ingredientList = ingredients.length ? (
-    ingredients.map(ingredient => {
-      return (
-        <div key={ingredient.id} className="row">
-          <p className="center-align">
-            {ingredient.name}{' '}
-            <button
-              className="btn-mini waves-effect waves-light red right"
-              type="button"
-              name="action"
-              onClick={() => deleteIngredient(ingredient.id)}
-            >
-              <i className="material-icons center-align">x</i>
-            </button>
-          </p>
-        </div>
-      );
-    })
-  ) : (
-    <p>No Ingredients Yet</p>
-  );
+  const startedListening = name => {
+    setIngredient(name);
+  };
 
   return (
     // INGREDIENT LIST FORM
     <div>
       <h1 className="center-align">Your Shopping List</h1>
-      {ingredientList}
+      <ListOfIngredients
+        ingredients={ingredients}
+        deleteIngredient={deleteIngredient}
+      />
       {/* INPUT ITEM FORM */}
       <form onSubmit={handleSubmit}>
         <div className="main-header">
-          <div>
+          <div className="showcase container">
             <div className="row">
               <div className="col s12 m10 offset-m1 center">
                 <label htmlFor="ingredient">Add Ingredient</label>
@@ -123,16 +109,17 @@ const List = () => {
               >
                 Add Ingredient
               </button>
-              {/* <OutputSpeech content={state.name} onClick={() => handleSubmit} /> */}
+              <OutputSpeech content={ingredient} onClick={() => handleSubmit} />
             </div>
           </div>
         </div>
       </form>
-      {/* <InputSpeech startedListening={startedListening} /> */}
+      <InputSpeech
+        startedListening={startedListening}
+        handleTranscript={handleTranscript}
+      />
     </div>
   );
 };
-
-// return <ul>{ingredients.map((ingredient) => <li key={ingredient.id}>{ingredient.name}</li>)}</ul>;
 
 export default List;
