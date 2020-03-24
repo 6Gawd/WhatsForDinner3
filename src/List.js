@@ -5,6 +5,8 @@ import { db } from './base';
 import ListOfIngredients from './Ingredients/ListOfIngredients';
 import OutputSpeech from './Speech/OutputSpeech';
 import InputSpeech from './Speech/InputSpeech';
+import annyang from 'annyang';
+import VoiceCommands from './Speech/VoiceCommands';
 
 const List = () => {
 	const { currentUser } = useContext(AuthContext);
@@ -75,6 +77,30 @@ const List = () => {
 	const startedListening = (name) => {
 		setIngredient(name);
 	};
+
+	const voiceSubmit = async (tag) => {
+		await addIngredient({
+			name: tag,
+			userId: currentUser.uid
+		});
+		gotIngredients(currentUser.uid);
+		setIngredient('');
+	};
+
+	const returnCommands = (userId) => {
+		return {
+			'add *tag': (tag) => {
+				voiceSubmit(tag);
+				// const returnedIngredient = await addIngredient({ name: tag, userId: userId });
+				// setIngredients([...ingredients, returnedIngredient])
+				// setIngredient("")
+			}
+		};
+	};
+
+	annyang.start();
+
+	if (currentUser) annyang.addCommands(returnCommands(currentUser.uid));
 
 	return (
 		// INGREDIENT LIST FORM

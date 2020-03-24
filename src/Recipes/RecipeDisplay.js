@@ -6,24 +6,24 @@ const RecipeDisplay = ({ recipe, removeFromFavorites }) => {
 
 	return (
 		<div>
-			{/* <div className="row">
-				<div className="col s12 m6"> */}
-			<div className="card">
-				<div className="card-image">
-					<img src={image} alt={title} />
-					<span className="card-title">{title}</span>
-					<a className="btn-floating halfway-fab waves-effect waves-light red">
-						<i className="material-icons" onClick={() => removeFromFavorites(id)}>
-							-
-						</i>
-					</a>
-				</div>
-				<div className="card-action">
-					<Link to={`favoriterecipes/instructions/${id}`}>Instructions</Link>
+			<div className="row">
+				<div className="col s12 m6">
+					<div className="card">
+						<div className="card-image">
+							<img src={image} alt={title} />
+							<span className="card-title">{title}</span>
+							<a className="btn-floating halfway-fab waves-effect waves-light red">
+								<i className="material-icons" onClick={() => removeFromFavorites(id)}>
+									-
+								</i>
+							</a>
+						</div>
+						<div className="card-action">
+							<Link to={`favoriterecipes/instructions/${id}`}>Instructions</Link>
+						</div>
+					</div>
 				</div>
 			</div>
-			{/* </div>
-			</div> */}
 		</div>
 	);
 };
