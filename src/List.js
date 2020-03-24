@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
+import { Redirect } from 'react-router-dom';
 
 import ListOfIngredients from './Ingredients/ListOfIngredients';
 import OutputSpeech from './Speech/OutputSpeech';
@@ -8,13 +9,14 @@ import InputSpeech from './Speech/InputSpeech';
 import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
-const List = () => {
+const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
 
   useEffect(() => {
     if (currentUser) gotIngredients(currentUser.uid);
+    return;
   }, [currentUser]);
 
   const gotIngredients = async userId => {
@@ -110,20 +112,25 @@ const List = () => {
     await gotIngredients(currentUser.uid);
   };
 
-  const returnCommands = userId => {
+  const getRecipes = () => {
+    history.push('/recipes');
+  };
+
+  const returnCommands = () => {
     return {
       'add *tag': tag => {
         addVoice(tag);
       },
       'delete *tag': tag => {
         deleteVoice(tag);
-      }
+      },
+      'get recipes': () => getRecipes()
     };
   };
 
   annyang.start();
 
-  if (currentUser) annyang.addCommands(returnCommands(currentUser.uid));
+  if (currentUser) annyang.addCommands(returnCommands());
 
   console.log('INGREDIENTS:', ingredients);
   return (

@@ -1,15 +1,9 @@
 import annyang from 'annyang';
 
-const getRecipes = ingredients => {
-  alert(`redirected to RECIPES. Here are the top 5 recipes I've found for you`);
-};
 const getFavoriteRecipes = () => {
   alert(`redirect to Favorite RECIPES.`);
 };
 const voiceCommands = {
-  hello: hello,
-  onStart: annyang.pause,
-  'get recipes': getRecipes,
   'get favorite recipes': getFavoriteRecipes
 };
 
