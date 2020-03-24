@@ -6,6 +6,10 @@ import ListOfIngredients from './Ingredients/ListOfIngredients';
 import OutputSpeech from './Speech/OutputSpeech';
 import InputSpeech from './Speech/InputSpeech';
 
+//SPEECH STUFF
+import annyang from 'annyang';
+import VoiceCommands from './Speech/Commands';
+
 const List = () => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
@@ -84,6 +88,11 @@ const List = () => {
   const startedListening = name => {
     setIngredient(name);
   };
+
+  if (annyang) {
+    annyang.start()
+
+  }
 
   return (
     // INGREDIENT LIST FORM
