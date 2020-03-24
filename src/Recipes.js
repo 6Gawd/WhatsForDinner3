@@ -4,14 +4,14 @@ import { AuthContext } from './Auth.js';
 import { db } from './base';
 import axios from 'axios';
 import SingleRecipe from './Recipes/SingleRecipe';
-// import secrets from '../secrets';
+// import '../secrets';
 // const spoonConfig = {
 // 	API: process.env.SPOON_API_KEY
 // };
 
 const Recipes = () => {
 	const recipeURLStart = 'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
-	const recipeURLEnd = '&number=6&apiKey=ea67a4bdaf834f4b86818a43a58433eb';
+	const recipeURLEnd = `&number=6&apiKey=`;
 	// console.log('APIKEY', spoonConfig.API);
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
@@ -66,7 +66,11 @@ const Recipes = () => {
 	return (
 		<div>
 			<h1>Recipes</h1>
-			{recipes.map((recipe) => <SingleRecipe key={recipe.id} recipe={recipe} />)}
+			<div className="row">
+				<div className="col s12 m6">
+					{recipes.map((recipe) => <SingleRecipe key={recipe.id} recipe={recipe} />)}
+				</div>
+			</div>
 			<button className="btn" type="button" onClick={() => getRecipes(ingredients)}>
 				Get Recipes
 			</button>

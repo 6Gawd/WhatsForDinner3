@@ -10,6 +10,7 @@ import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
 import NavBar from './Navbar';
 import FavoriteRecipes from './Recipes/FavoriteRecipes';
+import RecipeInstructions from './Recipes/RecipeInstructions';
 
 const App = () => {
 	return (
@@ -22,6 +23,7 @@ const App = () => {
 						<PrivateRoute exact path="/list" component={List} />
 						<PrivateRoute exact path="/recipes" component={Recipes} />
 						<PrivateRoute exact path="/favoriterecipes" component={FavoriteRecipes} />
+						<PrivateRoute exact path="/favoriterecipes/instructions/:id" component={RecipeInstructions} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/signup" component={SignUp} />
 						<Route render={() => <Redirect to="/" />} />
