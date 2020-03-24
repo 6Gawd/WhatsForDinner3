@@ -87,7 +87,7 @@ const List = () => {
     setIngredient(name);
   };
 
-  const voiceSubmit = async tag => {
+  const addVoice = async tag => {
     await addIngredient({
       name: tag,
       userId: currentUser.uid
@@ -96,10 +96,27 @@ const List = () => {
     setIngredient('');
   };
 
+  const deleteVoice = async tag => {
+    const id = await db
+      .collection('ingredients')
+      .where('userId', '==', currentUser.uid)
+      .where('name', '==', tag)
+      .get()
+      .then(doc => doc.docs[0].id);
+    await db
+      .collection('ingredients')
+      .doc(id)
+      .delete();
+    await gotIngredients(currentUser.uid);
+  };
+
   const returnCommands = userId => {
     return {
       'add *tag': tag => {
-        voiceSubmit(tag);
+        addVoice(tag);
+      },
+      'delete *tag': tag => {
+        deleteVoice(tag);
       }
     };
   };
@@ -108,6 +125,7 @@ const List = () => {
 
   if (currentUser) annyang.addCommands(returnCommands(currentUser.uid));
 
+  console.log('INGREDIENTS:', ingredients);
   return (
     // INGREDIENT LIST FORM
     <div>
