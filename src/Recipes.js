@@ -1,18 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { auth } from './base';
+// import { auth } from './base';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
 import axios from 'axios';
-import ListOfRecipes from './Recipes/LisfOfRecipes';
+import SingleRecipe from './Recipes/SingleRecipe';
 // import secrets from '../secrets';
-const spoonConfig = {
-	API: process.env.SPOON_API_KEY
-};
+// const spoonConfig = {
+// 	API: process.env.SPOON_API_KEY
+// };
 
 const Recipes = () => {
-	let recipeURLStart = 'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
-	let recipeURLEnd = '&number=6&apiKey=' + spoonConfig.API;
-	console.log('APIKEY', spoonConfig.API);
+	const recipeURLStart = 'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
+	const recipeURLEnd = '&number=6&apiKey=ea67a4bdaf834f4b86818a43a58433eb';
+	// console.log('APIKEY', spoonConfig.API);
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
 	const [ recipes, setRecipes ] = useState([]);
@@ -59,14 +59,14 @@ const Recipes = () => {
 			console.log('NEW RECIPES', newRecipes);
 			setRecipes(newRecipes);
 		} else {
-			console.log('DIDNT WORK HAHA');
+			console.error('error');
 		}
 	};
 
 	return (
 		<div>
 			<h1>Recipes</h1>
-			{recipes.map((recipe) => <ListOfRecipes key={recipe.id} recipe={recipe} />)}
+			{recipes.map((recipe) => <SingleRecipe key={recipe.id} recipe={recipe} />)}
 			<button className="btn" type="button" onClick={() => getRecipes(ingredients)}>
 				Get Recipes
 			</button>
