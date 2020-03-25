@@ -106,7 +106,7 @@ const List = ({ history }) => {
 			}
 			speechSynth.speak(new SpeechSynthesisUtterance(`removed ${tag}`));
 		} catch (error) {
-			console.log('No such Item', error);
+			speechSynth.speak(new SpeechSynthesisUtterance(`couldnt find ${tag}`));
 		}
 	};
 
@@ -178,6 +178,12 @@ const List = ({ history }) => {
 				</div>
 			</form>
 			<InputSpeech startedListening={startedListening} handleTranscript={handleTranscript} />
+			{/* need to make this look prettier later */}
+			<h3>Test out these Commands!</h3>
+			<p>You can add any food item you like to your list. Say "add Cheese"</p>
+			<p>You can also delete any food item off of your list. Say "delete Cheese"</p>
+			<p>If you want to get some recipes using your current shopping list, say "get recipes"</p>
+			<p>If you want to remove your current shopping list, say "clear my list"</p>
 		</div>
 	);
 };
