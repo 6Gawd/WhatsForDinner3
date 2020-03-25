@@ -32,26 +32,34 @@ const SingleRecipe = ({ recipe }) => {
     await db.collection('favoriteRecipes').add(newFavoriteRecipe);
   };
   return (
-    <div className="col s12 l12">
-      <div>
-        <div className="row">
-          <div className="col s12 m6 l4">
-            <div className="card">
-              <div className="card-image">
-                <img src={image} alt={title} />
-                <span className="card-title">{title}</span>
-                <a className="btn-floating halfway-fab waves-effect waves-light red">
-                  <i className="material-icons" onClick={addRecipeToFavorite}>
-                    +
-                  </i>
-                </a>
-              </div>
-              <div className="card-content">
-                <p>Used Ingredients: {usedIngredients.join(', ')}</p>
-                <p>Missed Ingredients: {missedIngredients.join(', ')}</p>
-                <p>Unused Ingredients: {unusedIngredients.join(', ')}</p>
-              </div>
-            </div>
+    // <div className="col s12 l12">
+    <div>
+      <div className="col s12 m6 l4">
+        <div className="card">
+          <div className="card-image">
+            <img src={image} alt={title} />
+            <span className="card-title">{title}</span>
+            <a className="btn-floating halfway-fab waves-effect waves-light red">
+              <i className="material-icons" onClick={addRecipeToFavorite}>
+                favorite
+              </i>
+            </a>
+          </div>
+          <div className="card-content left-align">
+            <ul>
+              <li>
+                <i className="tiny material-icons">check_box</i>
+                Used Ingredients: {usedIngredients.join(', ')}
+              </li>
+              <li>
+                <i className="tiny material-icons">remove_shopping_cart</i>
+                Missed Ingredients: {missedIngredients.join(', ')}
+              </li>
+              <li>
+                <i className="tiny material-icons">shopping_cart</i>
+                Unused Ingredients: {unusedIngredients.join(', ')}
+              </li>
+            </ul>
           </div>
         </div>
       </div>

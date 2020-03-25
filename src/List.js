@@ -10,11 +10,18 @@ import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
 const speechSynth = window.speechSynthesis;
+// console.log('Voices', speechSynth.getVoices());
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
+
+  let voice = speechSynthesis.getVoices().filter(function(voice) {
+    return voice.name == 'Google UK English Female';
+  })[0];
+  let trevor = new SpeechSynthesisUtterance(`Default Text`);
+  trevor.voice = voice;
 
   useEffect(() => {
     gotIngredients(currentUser.uid);
@@ -48,9 +55,8 @@ const List = ({ history }) => {
         names.push(ingredients[i].name.toLowerCase());
       }
       if (names.includes(ingredient.name.toLowerCase())) {
-        speechSynth.speak(
-          new SpeechSynthesisUtterance(`You have already added this item!`)
-        );
+        trevor.text = `You have already added this item!`;
+        speechSynth.speak(trevor);
       } else {
         const newIngredient = { ...ingredient };
         await db
@@ -110,9 +116,8 @@ const List = ({ history }) => {
       names.push(currentIngredients[i].name.toLowerCase());
     }
     if (names.includes(tag)) {
-      speechSynth.speak(
-        new SpeechSynthesisUtterance(`You have already added this item!`)
-      );
+      trevor.text = `You have already added this item!`;
+      speechSynth.speak(trevor);
     } else {
       await addIngredient({
         name: tag,
@@ -120,7 +125,8 @@ const List = ({ history }) => {
       });
       gotIngredients(currentUser.uid);
       //Make voice playback
-      speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
+      trevor.text = `got ${tag}`;
+      speechSynth.speak(trevor);
       setIngredient('');
     }
   };
@@ -140,9 +146,11 @@ const List = ({ history }) => {
           .delete();
         await gotIngredients(currentUser.uid);
       }
-      speechSynth.speak(new SpeechSynthesisUtterance(`removed ${tag}`));
+      trevor.text = `removed ${tag}`;
+      speechSynth.speak(trevor);
     } catch (error) {
-      speechSynth.speak(new SpeechSynthesisUtterance(`couldnt find ${tag}`));
+      trevor.text = `couldnt find ${tag}`;
+      speechSynth.speak(trevor);
     }
   };
 
@@ -160,18 +168,19 @@ const List = ({ history }) => {
         });
       });
     //for some reason, if ingre is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
-    if (!ingre[0])
-      speechSynth.speak(
-        new SpeechSynthesisUtterance(`you need to add some ingredients first`)
-      );
-    else {
-      speechSynth.speak(new SpeechSynthesisUtterance(`getting your recipes`));
+    if (!ingre[0]) {
+      trevor.text = `you need to add some ingredients first`;
+      speechSynth.speak(trevor);
+    } else {
+      trevor.text = `getting your recipes`;
+      speechSynth.speak(trevor);
       history.push('/recipes');
     }
   };
 
   const clearList = async () => {
-    speechSynth.speak(new SpeechSynthesisUtterance(`removing your list`));
+    trevor.text = `removing your list`;
+    speechSynth.speak(trevor);
     //When you do the querySnapshot, you can call firebase methods inside of the collection you get.
     await db
       .collection('ingredients')
@@ -203,53 +212,65 @@ const List = ({ history }) => {
   annyang.start();
   if (currentUser) annyang.addCommands(returnCommands());
 
-  console.log('INGREDIENTS:', ingredients);
   return (
     // INGREDIENT LIST FORM
     <div>
-      <h1 className="center-align">Your Shopping List</h1>
-      <ListOfIngredients
-        ingredients={ingredients}
-        deleteIngredient={deleteIngredient}
-      />
-      {/* INPUT ITEM FORM */}
-      <form onSubmit={handleSubmit}>
-        <div className="main-header">
-          <div className="showcase container">
-            <div className="row">
-              <div className="col s12 m10 offset-m1 center">
-                <label htmlFor="ingredient">Add Ingredient</label>
-                <input value={ingredient} name="name" onChange={handleChange} />
+      <div className="container col s12 m10 offset-m1 center">
+        <div className="card-panel">
+          <h1 className="center-align">Your Shopping List</h1>
+          <ListOfIngredients
+            ingredients={ingredients}
+            deleteIngredient={deleteIngredient}
+          />
+          {/* INPUT ITEM FORM */}
+          <form onSubmit={handleSubmit}>
+            <div className="main-header">
+              <div className="showcase container">
+                <div className="row">
+                  <div className="col s12 m10 offset-m1 center">
+                    <label htmlFor="ingredient">Add Ingredient</label>
+                    <input
+                      value={ingredient}
+                      name="name"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <button
+                    className="btn waves-effect waves-light indigo center"
+                    type="submit"
+                    name="action"
+                  >
+                    Add Ingredient
+                  </button>
+                </div>
               </div>
-              <button
-                className="btn waves-effect waves-light indigo center"
-                type="submit"
-                name="action"
-              >
-                Add Ingredient
-              </button>
-              <OutputSpeech content={ingredient} onClick={() => handleSubmit} />
             </div>
-          </div>
+          </form>
         </div>
-      </form>
-      <InputSpeech
-        startedListening={startedListening}
-        handleTranscript={handleTranscript}
-      />
+      </div>
+
       {/* need to make this look prettier later */}
-      <h3>Test out these Commands!</h3>
-      <p>You can add any food item you like to your list. Say "add Cheese"</p>
-      <p>
-        You can also delete any food item off of your list. Say "delete Cheese"
-      </p>
-      <p>
-        If you want to get some recipes using your current shopping list, say
-        "get recipes"
-      </p>
-      <p>
-        If you want to remove your current shopping list, say "clear my list"
-      </p>
+
+      <div className="container col s12 m10 offset-m1 center">
+        <div className="card-panel">
+          <h3>Test out these Commands!</h3>
+          <p>
+            You can add any food item you like to your list. Say "add Cheese"
+          </p>
+          <p>
+            You can also delete any food item off of your list. Say "delete
+            Cheese"
+          </p>
+          <p>
+            If you want to get some recipes using your current shopping list,
+            say "get recipes"
+          </p>
+          <p>
+            If you want to remove your current shopping list, say "clear my
+            list"
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
