@@ -9,13 +9,13 @@ import InputSpeech from './Speech/InputSpeech';
 import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
-const List = ({ history }) => {
+const List = (props, { history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
 
   useEffect(() => {
-    if (currentUser) gotIngredients(currentUser.uid);
+    gotIngredients(currentUser.uid);
   }, [currentUser]);
 
   const gotIngredients = async userId => {
@@ -33,6 +33,7 @@ const List = ({ history }) => {
           });
         });
       setIngredients(ingredients);
+      return ingredients;
     } catch (error) {
       console.error('No Ingredients', error);
     }
@@ -40,12 +41,20 @@ const List = ({ history }) => {
 
   const addIngredient = async ingredient => {
     try {
-      const newIngredient = { ...ingredient };
-      await db
-        .collection('ingredients')
-        .add(ingredient)
-        .then(obj => (newIngredient.id = obj.id));
-      return newIngredient;
+      let names = [];
+      for (let i = 0; i < ingredients.length; i++) {
+        names.push(ingredients[i].name.toLowerCase());
+      }
+      if (names.includes(ingredient.name.toLowerCase())) {
+        alert('You have already added that item!');
+      } else {
+        const newIngredient = { ...ingredient };
+        await db
+          .collection('ingredients')
+          .add(ingredient)
+          .then(obj => (newIngredient.id = obj.id));
+        return newIngredient;
+      }
     } catch (error) {
       console.error('No Ingredients', error);
     }
@@ -80,8 +89,10 @@ const List = ({ history }) => {
       name: ingredient,
       userId: currentUser.uid
     });
-    setIngredients([...ingredients, returnedIngredient]);
-    setIngredient('');
+    if (returnedIngredient) {
+      setIngredients([...ingredients, returnedIngredient]);
+      setIngredient('');
+    }
   };
 
   const startedListening = name => {
@@ -89,26 +100,41 @@ const List = ({ history }) => {
   };
 
   const addVoice = async tag => {
-    await addIngredient({
-      name: tag,
-      userId: currentUser.uid
-    });
-    gotIngredients(currentUser.uid);
-    setIngredient('');
+    const currentIngredients = await gotIngredients(currentUser.uid);
+    let names = [];
+    for (let i = 0; i < currentIngredients.length; i++) {
+      names.push(currentIngredients[i].name.toLowerCase());
+    }
+    if (names.includes(tag)) {
+      alert('You have already added this item!');
+    } else {
+      await addIngredient({
+        name: tag,
+        userId: currentUser.uid
+      });
+      gotIngredients(currentUser.uid);
+      setIngredient('');
+    }
   };
 
   const deleteVoice = async tag => {
-    const id = await db
-      .collection('ingredients')
-      .where('userId', '==', currentUser.uid)
-      .where('name', '==', tag)
-      .get()
-      .then(doc => doc.docs[0].id);
-    await db
-      .collection('ingredients')
-      .doc(id)
-      .delete();
-    await gotIngredients(currentUser.uid);
+    try {
+      const id = await db
+        .collection('ingredients')
+        .where('userId', '==', currentUser.uid)
+        .where('name', '==', tag)
+        .get()
+        .then(doc => doc.docs[0].id);
+      if (id) {
+        await db
+          .collection('ingredients')
+          .doc(id)
+          .delete();
+        await gotIngredients(currentUser.uid);
+      }
+    } catch (error) {
+      console.log('No such Item', error);
+    }
   };
 
   const getRecipes = () => {
@@ -131,7 +157,8 @@ const List = ({ history }) => {
 
   if (currentUser) annyang.addCommands(returnCommands());
 
-  console.log('INGREDIENTS:', ingredients);
+  console.log('Ingredients:', ingredients);
+
   return (
     // INGREDIENT LIST FORM
     <div>

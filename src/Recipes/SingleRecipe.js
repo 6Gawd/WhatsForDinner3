@@ -29,17 +29,9 @@ const SingleRecipe = ({ recipe }) => {
       console.log('No Recipe', error);
     }
 
-    await db
-      .collection(
-        //#BLESSED
-        'favoriteRecipes'
-      )
-      .add(newFavoriteRecipe);
+    await db.collection('favoriteRecipes').add(newFavoriteRecipe);
   };
   return (
-    //The god.
-    //where the recipes at Fam?
-    //It works Leslie
     <div className="col s12 l12">
       <div>
         <div className="row">
@@ -55,7 +47,6 @@ const SingleRecipe = ({ recipe }) => {
                 </a>
               </div>
               <div className="card-content">
-                {/* ¯\_(ツ)_/¯ */}
                 <p>Used Ingredients: {usedIngredients.join(', ')}</p>
                 <p>Missed Ingredients: {missedIngredients.join(', ')}</p>
                 <p>Unused Ingredients: {unusedIngredients.join(', ')}</p>
