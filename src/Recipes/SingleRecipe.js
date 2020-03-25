@@ -15,7 +15,8 @@ const SingleRecipe = ({ recipe }) => {
 
   const { currentUser } = useContext(AuthContext);
   const recipeURLStart = 'https://api.spoonacular.com/recipes/';
-  const recipeURLEnd = '/analyzedInstructions?apiKey=';
+  const recipeURLEnd =
+    '/analyzedInstructions?apiKey=9dbfb748dfa44db2becd40388c22f59c';
 
   const addRecipeToFavorite = async () => {
     const newFavoriteRecipe = { title, userId: currentUser.uid, image };

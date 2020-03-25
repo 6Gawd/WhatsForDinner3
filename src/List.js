@@ -16,7 +16,6 @@ const List = ({ history }) => {
 
   useEffect(() => {
     if (currentUser) gotIngredients(currentUser.uid);
-    return;
   }, [currentUser]);
 
   const gotIngredients = async userId => {

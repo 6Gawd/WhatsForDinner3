@@ -4,7 +4,7 @@ import { AuthContext } from './Auth.js';
 import { db } from './base';
 import axios from 'axios';
 import SingleRecipe from './Recipes/SingleRecipe';
-// import '../secrets';
+import './secrets';
 // const spoonConfig = {
 // 	API: process.env.SPOON_API_KEY
 // };
@@ -13,7 +13,7 @@ const Recipes = () => {
   const recipeURLStart =
     'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
   const recipeURLEnd = `&number=6&apiKey=9dbfb748dfa44db2becd40388c22f59c`;
-  // console.log('APIKEY', spoonConfig.API);
+  console.log('APIKEY', process.env.SPOON_API_KEY);
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
