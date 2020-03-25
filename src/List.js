@@ -9,7 +9,9 @@ import InputSpeech from './Speech/InputSpeech';
 import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
-const List = (props, { history }) => {
+const speechSynth = window.speechSynthesis;
+
+const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
@@ -46,7 +48,9 @@ const List = (props, { history }) => {
         names.push(ingredients[i].name.toLowerCase());
       }
       if (names.includes(ingredient.name.toLowerCase())) {
-        alert('You have already added that item!');
+        speechSynth.speak(
+          new SpeechSynthesisUtterance(`You have already added this item!`)
+        );
       } else {
         const newIngredient = { ...ingredient };
         await db
@@ -106,13 +110,17 @@ const List = (props, { history }) => {
       names.push(currentIngredients[i].name.toLowerCase());
     }
     if (names.includes(tag)) {
-      alert('You have already added this item!');
+      speechSynth.speak(
+        new SpeechSynthesisUtterance(`You have already added this item!`)
+      );
     } else {
       await addIngredient({
         name: tag,
         userId: currentUser.uid
       });
       gotIngredients(currentUser.uid);
+      //Make voice playback
+      speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
       setIngredient('');
     }
   };
@@ -132,13 +140,51 @@ const List = (props, { history }) => {
           .delete();
         await gotIngredients(currentUser.uid);
       }
+      speechSynth.speak(new SpeechSynthesisUtterance(`removed ${tag}`));
     } catch (error) {
-      console.log('No such Item', error);
+      speechSynth.speak(new SpeechSynthesisUtterance(`couldnt find ${tag}`));
     }
   };
 
-  const getRecipes = () => {
-    history.push('/recipes');
+  const getRecipes = async () => {
+    const ingre = [];
+    await db
+      .collection('ingredients')
+      .where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          const item = doc.data();
+          item.id = doc.id;
+          ingre.push(item);
+        });
+      });
+    //for some reason, if ingre is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
+    if (!ingre[0])
+      speechSynth.speak(
+        new SpeechSynthesisUtterance(`you need to add some ingredients first`)
+      );
+    else {
+      speechSynth.speak(new SpeechSynthesisUtterance(`getting your recipes`));
+      history.push('/recipes');
+    }
+  };
+
+  const clearList = async () => {
+    speechSynth.speak(new SpeechSynthesisUtterance(`removing your list`));
+    //When you do the querySnapshot, you can call firebase methods inside of the collection you get.
+    await db
+      .collection('ingredients')
+      .where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          db.collection('ingredients')
+            .doc(doc.id)
+            .delete();
+        });
+      });
+    setIngredients([]);
   };
 
   const returnCommands = () => {
@@ -149,16 +195,15 @@ const List = (props, { history }) => {
       'delete *tag': tag => {
         deleteVoice(tag);
       },
-      'get recipes': () => getRecipes()
+      'get recipes': () => getRecipes(),
+      'clear my list': () => clearList()
     };
   };
 
   annyang.start();
-
   if (currentUser) annyang.addCommands(returnCommands());
 
-  console.log('Ingredients:', ingredients);
-
+  console.log('INGREDIENTS:', ingredients);
   return (
     // INGREDIENT LIST FORM
     <div>
@@ -192,6 +237,19 @@ const List = (props, { history }) => {
         startedListening={startedListening}
         handleTranscript={handleTranscript}
       />
+      {/* need to make this look prettier later */}
+      <h3>Test out these Commands!</h3>
+      <p>You can add any food item you like to your list. Say "add Cheese"</p>
+      <p>
+        You can also delete any food item off of your list. Say "delete Cheese"
+      </p>
+      <p>
+        If you want to get some recipes using your current shopping list, say
+        "get recipes"
+      </p>
+      <p>
+        If you want to remove your current shopping list, say "clear my list"
+      </p>
     </div>
   );
 };
