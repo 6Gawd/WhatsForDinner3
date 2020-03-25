@@ -34,6 +34,7 @@ const List = ({ history }) => {
 				});
 			});
 			setIngredients(ingredients);
+			return ingredients;
 		} catch (error) {
 			console.error('No Ingredients', error);
 		}
@@ -41,9 +42,17 @@ const List = ({ history }) => {
 
 	const addIngredient = async (ingredient) => {
 		try {
-			const newIngredient = { ...ingredient };
-			await db.collection('ingredients').add(ingredient).then((obj) => (newIngredient.id = obj.id));
-			return newIngredient;
+			let names = [];
+			for (let i = 0; i < ingredients.length; i++) {
+				names.push(ingredients[i].name.toLowerCase());
+			}
+			if (names.includes(ingredient.name.toLowerCase())) {
+				speechSynth.speak(new SpeechSynthesisUtterance(`You have already added this item!`));
+			} else {
+				const newIngredient = { ...ingredient };
+				await db.collection('ingredients').add(ingredient).then((obj) => (newIngredient.id = obj.id));
+				return newIngredient;
+			}
 		} catch (error) {
 			console.error('No Ingredients', error);
 		}
@@ -73,8 +82,10 @@ const List = ({ history }) => {
 			name: ingredient,
 			userId: currentUser.uid
 		});
-		setIngredients([ ...ingredients, returnedIngredient ]);
-		setIngredient('');
+		if (returnedIngredient) {
+			setIngredients([ ...ingredients, returnedIngredient ]);
+			setIngredient('');
+		}
 	};
 
 	const startedListening = (name) => {
@@ -82,14 +93,23 @@ const List = ({ history }) => {
 	};
 
 	const addVoice = async (tag) => {
-		await addIngredient({
-			name: tag,
-			userId: currentUser.uid
-		});
-		gotIngredients(currentUser.uid);
-		//Make voice playback
-		speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
-		setIngredient('');
+		const currentIngredients = await gotIngredients(currentUser.uid);
+		let names = [];
+		for (let i = 0; i < currentIngredients.length; i++) {
+			names.push(currentIngredients[i].name.toLowerCase());
+		}
+		if (names.includes(tag)) {
+			speechSynth.speak(new SpeechSynthesisUtterance(`You have already added this item!`));
+		} else {
+			await addIngredient({
+				name: tag,
+				userId: currentUser.uid
+			});
+			gotIngredients(currentUser.uid);
+			//Make voice playback
+			speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
+			setIngredient('');
+		}
 	};
 
 	const deleteVoice = async (tag) => {
