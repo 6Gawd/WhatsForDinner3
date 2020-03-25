@@ -4,54 +4,75 @@ import { db } from '../base';
 import RecipeDisplay from './RecipeDisplay';
 
 const FavoriteRecipes = () => {
-	const { currentUser } = useContext(AuthContext);
-	const [ recipes, setRecipes ] = useState([]);
+  const { currentUser } = useContext(AuthContext);
+  const [recipes, setRecipes] = useState([]);
 
-	useEffect(
-		() => {
-			if (currentUser) getRecipes(currentUser.uid);
-		},
-		[ currentUser ]
-	);
+  useEffect(() => {
+    if (currentUser) getRecipes(currentUser.uid);
+  }, [currentUser]);
 
-	const getRecipes = async (userId) => {
-		try {
-			const recipes = [];
-			await db.collection('favoriteRecipes').where('userId', '==', userId).get().then(function(querySnapshot) {
-				querySnapshot.forEach(function(doc) {
-					const item = doc.data();
-					item.id = doc.id;
-					recipes.push(item);
-				});
-			});
-			setRecipes(recipes);
-		} catch (error) {
-			console.error('No Recipes', error);
-		}
-	};
+  const getRecipes = async userId => {
+    try {
+      const recipes = [];
+      await db
+        .collection('favoriteRecipes')
+        .where('userId', '==', userId)
+        .get()
+        .then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            const item = doc.data();
+            item.id = doc.id;
+            recipes.push(item);
+          });
+        });
+      setRecipes(recipes);
+    } catch (error) {
+      console.error('No Recipes', error);
+    }
+  };
 
-	const removeFromFavorites = async (recipeId) => {
-		try {
-			await db.collection('favoriteRecipes').doc(recipeId).delete();
-			const updatedRecipes = recipes.filter((recipe) => recipe.id !== recipeId);
-			setRecipes(updatedRecipes);
-		} catch (error) {
-			console.error('Error deleting recipe', error);
-		}
-	};
+  const removeFromFavorites = async recipeId => {
+    try {
+      const toastHTML = `
+      <div>
+        <p>Recipe removed from favorites</p>
+      </div>`;
+      await db
+        .collection('favoriteRecipes')
+        .doc(recipeId)
+        .delete();
+      const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+      setRecipes(updatedRecipes);
+      // M.toast({
+      //   html: toastHTML
+      // });
+    } catch (error) {
+      console.error('Error deleting recipe', error);
+    }
+  };
 
-	return (
-		<div>
-			<h1 className="center-align">Your Favorite Recipes</h1>
-			{recipes.length ? (
-				recipes.map((recipe) => (
-					<RecipeDisplay key={recipe.id} recipe={recipe} removeFromFavorites={removeFromFavorites} />
-				))
-			) : (
-				<p>No Favorite Recipes yet</p>
-			)}
-		</div>
-	);
+  return (
+    <div className="col s12 l12">
+      <div>
+        <h1 className="center-align">Your Favorite Recipes</h1>
+        <div className="container">
+          <div className="row">
+            {recipes.length ? (
+              recipes.map(recipe => (
+                <RecipeDisplay
+                  key={recipe.id}
+                  recipe={recipe}
+                  removeFromFavorites={removeFromFavorites}
+                />
+              ))
+            ) : (
+              <p>No Favorite Recipes yet</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default FavoriteRecipes;
