@@ -9,6 +9,8 @@ import InputSpeech from './Speech/InputSpeech';
 import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
+const speechSynth = window.speechSynthesis;
+
 const List = ({ history }) => {
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
@@ -24,19 +26,14 @@ const List = ({ history }) => {
 	const gotIngredients = async (userId) => {
 		try {
 			const ingredients = [];
-			const unsubscribe = await db
-				.collection('ingredients')
-				.where('userId', '==', userId)
-				.get()
-				.then(function(querySnapshot) {
-					querySnapshot.forEach(function(doc) {
-						const item = doc.data();
-						item.id = doc.id;
-						ingredients.push(item);
-					});
+			await db.collection('ingredients').where('userId', '==', userId).get().then(function(querySnapshot) {
+				querySnapshot.forEach(function(doc) {
+					const item = doc.data();
+					item.id = doc.id;
+					ingredients.push(item);
 				});
+			});
 			setIngredients(ingredients);
-			return unsubscribe;
 		} catch (error) {
 			console.error('No Ingredients', error);
 		}
@@ -90,6 +87,8 @@ const List = ({ history }) => {
 			userId: currentUser.uid
 		});
 		gotIngredients(currentUser.uid);
+		//Make voice playback
+		speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
 		setIngredient('');
 	};
 
@@ -105,13 +104,38 @@ const List = ({ history }) => {
 				await db.collection('ingredients').doc(id).delete();
 				await gotIngredients(currentUser.uid);
 			}
+			speechSynth.speak(new SpeechSynthesisUtterance(`removed ${tag}`));
 		} catch (error) {
 			console.log('No such Item', error);
 		}
 	};
 
-	const getRecipes = () => {
-		history.push('/recipes');
+	const getRecipes = async () => {
+		const ingre = [];
+		await db.collection('ingredients').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
+			querySnapshot.forEach(function(doc) {
+				const item = doc.data();
+				item.id = doc.id;
+				ingre.push(item);
+			});
+		});
+		//for some reason, if ingre is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
+		if (!ingre[0]) speechSynth.speak(new SpeechSynthesisUtterance(`you need to add some ingredients first`));
+		else {
+			speechSynth.speak(new SpeechSynthesisUtterance(`getting your recipes`));
+			history.push('/recipes');
+		}
+	};
+
+	const clearList = async () => {
+		speechSynth.speak(new SpeechSynthesisUtterance(`removing your list`));
+		//When you do the querySnapshot, you can call firebase methods inside of the collection you get.
+		await db.collection('ingredients').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
+			querySnapshot.forEach(function(doc) {
+				db.collection('ingredients').doc(doc.id).delete();
+			});
+		});
+		setIngredients([]);
 	};
 
 	const returnCommands = () => {
@@ -122,12 +146,12 @@ const List = ({ history }) => {
 			'delete *tag': (tag) => {
 				deleteVoice(tag);
 			},
-			'get recipes': () => getRecipes()
+			'get recipes': () => getRecipes(),
+			'clear my list': () => clearList()
 		};
 	};
 
 	annyang.start();
-
 	if (currentUser) annyang.addCommands(returnCommands());
 
 	console.log('INGREDIENTS:', ingredients);
