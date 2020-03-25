@@ -10,11 +10,18 @@ import annyang from 'annyang';
 import Commands, { returnCommands } from './Speech/Commands';
 
 const speechSynth = window.speechSynthesis;
+// console.log('Voices', speechSynth.getVoices());
 
 const List = ({ history }) => {
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
 	const [ ingredient, setIngredient ] = useState('');
+
+	let voice = speechSynthesis.getVoices().filter(function(voice) {
+		return voice.name == 'Google UK English Female';
+	})[0];
+	let trevor = new SpeechSynthesisUtterance(`Default Text`);
+	trevor.voice = voice;
 
 	useEffect(
 		() => {
@@ -47,7 +54,8 @@ const List = ({ history }) => {
 				names.push(ingredients[i].name.toLowerCase());
 			}
 			if (names.includes(ingredient.name.toLowerCase())) {
-				speechSynth.speak(new SpeechSynthesisUtterance(`You have already added this item!`));
+				trevor.text = `You have already added this item!`;
+				speechSynth.speak(trevor);
 			} else {
 				const newIngredient = { ...ingredient };
 				await db.collection('ingredients').add(ingredient).then((obj) => (newIngredient.id = obj.id));
@@ -99,7 +107,8 @@ const List = ({ history }) => {
 			names.push(currentIngredients[i].name.toLowerCase());
 		}
 		if (names.includes(tag)) {
-			speechSynth.speak(new SpeechSynthesisUtterance(`You have already added this item!`));
+			trevor.text = `You have already added this item!`;
+			speechSynth.speak(trevor);
 		} else {
 			await addIngredient({
 				name: tag,
@@ -107,7 +116,8 @@ const List = ({ history }) => {
 			});
 			gotIngredients(currentUser.uid);
 			//Make voice playback
-			speechSynth.speak(new SpeechSynthesisUtterance(`got ${tag}`));
+			trevor.text = `got ${tag}`;
+			speechSynth.speak(trevor);
 			setIngredient('');
 		}
 	};
@@ -124,9 +134,11 @@ const List = ({ history }) => {
 				await db.collection('ingredients').doc(id).delete();
 				await gotIngredients(currentUser.uid);
 			}
-			speechSynth.speak(new SpeechSynthesisUtterance(`removed ${tag}`));
+			trevor.text = `removed ${tag}`;
+			speechSynth.speak(trevor);
 		} catch (error) {
-			speechSynth.speak(new SpeechSynthesisUtterance(`couldnt find ${tag}`));
+			trevor.text = `couldnt find ${tag}`;
+			speechSynth.speak(trevor);
 		}
 	};
 
@@ -140,15 +152,19 @@ const List = ({ history }) => {
 			});
 		});
 		//for some reason, if ingre is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
-		if (!ingre[0]) speechSynth.speak(new SpeechSynthesisUtterance(`you need to add some ingredients first`));
-		else {
-			speechSynth.speak(new SpeechSynthesisUtterance(`getting your recipes`));
+		if (!ingre[0]) {
+			trevor.text = `you need to add some ingredients first`;
+			speechSynth.speak(trevor);
+		} else {
+			trevor.text = `getting your recipes`;
+			speechSynth.speak(trevor);
 			history.push('/recipes');
 		}
 	};
 
 	const clearList = async () => {
-		speechSynth.speak(new SpeechSynthesisUtterance(`removing your list`));
+		trevor.text = `removing your list`;
+		speechSynth.speak(trevor);
 		//When you do the querySnapshot, you can call firebase methods inside of the collection you get.
 		await db.collection('ingredients').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
 			querySnapshot.forEach(function(doc) {
@@ -174,7 +190,6 @@ const List = ({ history }) => {
 	annyang.start();
 	if (currentUser) annyang.addCommands(returnCommands());
 
-	console.log('INGREDIENTS:', ingredients);
 	return (
 		// INGREDIENT LIST FORM
 		<div>
