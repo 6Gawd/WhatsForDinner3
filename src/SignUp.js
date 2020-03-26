@@ -26,27 +26,29 @@ const SignUp = ({ history }) => {
   }
 
   return (
-    <div className="showcase container">
-      <h1>Sign up</h1>
-      <form onSubmit={handleSignUp}>
-        <label>
-          Email
-          <input name="email" type="email" placeholder="Email" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" placeholder="Password" />
-        </label>
-        <button
-          type="submit"
-          className="waves-effect waves-light btn-small indigo"
-        >
-          Sign Up
-        </button>
-        <h6>
-          Already have an account? <Link to="/login">Login</Link>
-        </h6>
-      </form>
+    <div className="container">
+      <div className="card-panel">
+        <h1>Sign up</h1>
+        <form onSubmit={handleSignUp}>
+          <label>
+            Email
+            <input name="email" type="email" placeholder="Email" />
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" placeholder="Password" />
+          </label>
+          <button
+            type="submit"
+            className="waves-effect waves-light btn-small indigo"
+          >
+            Sign Up
+          </button>
+          <h6>
+            Already have an account? <Link to="/login">Login</Link>
+          </h6>
+        </form>
+      </div>
     </div>
   );
 };

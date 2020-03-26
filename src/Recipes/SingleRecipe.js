@@ -19,12 +19,17 @@ const SingleRecipe = ({ recipe }) => {
     '/analyzedInstructions?apiKey=9dbfb748dfa44db2becd40388c22f59c';
 
   const addRecipeToFavorite = async () => {
-    const newFavoriteRecipe = { title, userId: currentUser.uid, image };
+    const newFavoriteRecipe = {
+      title,
+      userId: currentUser.uid,
+      image,
+      spoonacularId: id
+    };
     try {
       const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
-      // console.log(data);
+
       newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
-      console.log(newFavoriteRecipe);
+      console.log('FAV RECIPE', newFavoriteRecipe);
     } catch (error) {
       console.log('No Recipe', error);
     }
