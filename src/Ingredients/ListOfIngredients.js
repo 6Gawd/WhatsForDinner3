@@ -2,11 +2,11 @@ import React from 'react';
 
 const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
   return ingredients.length ? (
-    <ul class="collection">
+    <ul className="collection">
       {ingredients.map(ingredient => {
         return (
           <li className="collection-item" key={ingredient.id}>
-            <div>
+            <div className="center-align">
               {ingredient.name}
               <button
                 className="btn-floating btn-small waves-effect waves-light red secondary-content"
