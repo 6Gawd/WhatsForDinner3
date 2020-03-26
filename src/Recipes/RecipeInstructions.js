@@ -12,46 +12,34 @@ const RecipeInstructions = props => {
   const id = props.match.params.id;
 
   useEffect(() => {
-    // if (currentUser) {
     getFavoriteRecipe(currentUser.uid);
     annyang.start();
     trevor.text = "Let's Start Cooking, Are you Ready?";
     speechSynth.speak(trevor);
-
-    const returnCommands = () => {
-      // const recipe = await db
-      //   .collection('favoriteRecipes')
-      //   .doc(id)
-      //   .get()
-      //   .then(function(doc) {
-      //     return doc.data();
-      //   });
-      let steps = 0;
-      return {
-        'Yes I am': () => rec(steps),
-        'Go to next step': () => {
-          steps++;
-          rec(steps);
-          // trevor.text = `${x.steps[currentStep]}`;
-          // speechSynth.speak(trevor);
-        },
-        'repeat current step': () => {
-          rec(steps);
-        },
-        'Trevor stop': () => {
-          annyang.pause();
-        },
-        'go to previous step': () => {
-          steps--;
-          rec(steps);
-          // trevor.text = `${x.steps[currentStep]}`;
-          // speechSynth.speak(trevor);
-        }
-      };
-    };
-
-    annyang.addCommands(returnCommands());
   }, []);
+
+  const returnCommands = () => {
+    let steps = 0;
+    return {
+      'Yes I am': () => rec(steps),
+      'Go to next step': () => {
+        steps++;
+        rec(steps);
+      },
+      'repeat current step': () => {
+        rec(steps);
+      },
+      'Trevor stop': () => {
+        annyang.pause();
+      },
+      'go to previous step': () => {
+        steps--;
+        rec(steps);
+      }
+    };
+  };
+
+  annyang.addCommands(returnCommands());
 
   const rec = async step => {
     const recipe = await db
