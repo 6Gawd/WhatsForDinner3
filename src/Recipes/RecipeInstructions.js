@@ -13,41 +13,34 @@ const RecipeInstructions = props => {
   const id = props.match.params.id;
 
   useEffect(() => {
-    // if (currentUser) {
     getFavoriteRecipe(currentUser.uid);
     annyang.start();
     trevor.text = "Let's Start Cooking, Are you Ready?";
     speechSynth.speak(trevor);
-
-    const returnCommands = x => {
-      let steps = 0;
-      return {
-        'Yes I am': () => rec(steps),
-        'Go to next step': () => {
-          steps++;
-          rec(steps);
-          // trevor.text = `${x.steps[currentStep]}`;
-          // speechSynth.speak(trevor);
-        },
-        'repeat current step': () => {
-          rec(steps);
-        },
-        'Trevor stop': () => {
-          annyang.pause();
-        },
-        'go to previous step': () => {
-          steps--;
-          rec(steps);
-          // trevor.text = `${x.steps[currentStep]}`;
-          // speechSynth.speak(trevor);
-        }
-      };
-    };
-    annyang.addCommands(returnCommands(selectedRecipe));
-    // setCurrentStep(recipeSteps[0]);
-    // console.log('SET CURRENT STEPS', setCurrentStep(recipeSteps[0]));
-    // }
   }, []);
+
+  const returnCommands = () => {
+    let steps = 0;
+    return {
+      'Yes I am': () => rec(steps),
+      'Go to next step': () => {
+        steps++;
+        rec(steps);
+      },
+      'repeat current step': () => {
+        rec(steps);
+      },
+      'Trevor stop': () => {
+        annyang.pause();
+      },
+      'go to previous step': () => {
+        steps--;
+        rec(steps);
+      }
+    };
+  };
+
+  annyang.addCommands(returnCommands());
 
   const rec = async step => {
     const recipe = await db
@@ -57,7 +50,7 @@ const RecipeInstructions = props => {
       .then(function(doc) {
         return doc.data();
       });
-    setCurrentStep(recipe.steps[step]);
+    setCurrentStep(step);
     trevor.text = `Step ${step + 1}. ${recipe.steps[step]}`;
     speechSynth.speak(trevor);
   };
@@ -76,6 +69,8 @@ const RecipeInstructions = props => {
       console.error('No Recipe', error);
     }
   };
+
+  console.log('recipes');
   return (
     <div>
       <div className="container container-padding">
@@ -84,8 +79,7 @@ const RecipeInstructions = props => {
             <img src={selectedRecipe.image} alt={selectedRecipe.title} />
             <h4 className="right-align">{selectedRecipe.title}</h4>
             <p className="valign-wrapper left-align">
-              CURRENT STEP: {selectedRecipe.steps[currentStep]}
-              {/* CURRENT STEP {currentStep}: {selectedRecipe[currentStep]} */}
+              Current Step: {selectedRecipe.steps[currentStep]}
             </p>
           </div>
         </div>
