@@ -4,6 +4,7 @@ import { db } from '../base';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
+
 const RecipeInstructions = props => {
   const { currentUser } = useContext(AuthContext);
   const [currentStep, setCurrentStep] = useState(0);

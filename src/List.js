@@ -5,6 +5,7 @@ import { db } from './base';
 import ListOfIngredients from './Ingredients/ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from './Speech/OutputSpeech';
+
 import ToastContainer from 'react-toastify';
 // import Commands, { returnCommands } from './Speech/Commands';
 
@@ -272,6 +273,7 @@ const List = ({ history }) => {
       </div>
     </div>
   );
+
 };
 
 export default List;
