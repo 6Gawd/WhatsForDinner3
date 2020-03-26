@@ -1,30 +1,24 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './Auth.js';
 import { db } from './base';
-import { Redirect } from 'react-router-dom';
 
 import ListOfIngredients from './Ingredients/ListOfIngredients';
-import OutputSpeech from './Speech/OutputSpeech';
-import InputSpeech from './Speech/InputSpeech';
 import annyang from 'annyang';
-import Commands, { returnCommands } from './Speech/Commands';
-
-const speechSynth = window.speechSynthesis;
-// console.log('Voices', speechSynth.getVoices());
+import trevor, { speechSynth } from './Speech/OutputSpeech';
+import ToastContainer from 'react-toastify';
+// import Commands, { returnCommands } from './Speech/Commands';
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
-
-  let voice = speechSynthesis.getVoices().filter(function(voice) {
-    return voice.name == 'Google UK English Female';
-  })[0];
-  let trevor = new SpeechSynthesisUtterance(`Default Text`);
-  trevor.voice = voice;
+  // const [ active, setActive ] = useState(false);
 
   useEffect(() => {
     gotIngredients(currentUser.uid);
+    return () => {
+      annyang.abort();
+    };
   }, [currentUser]);
 
   const gotIngredients = async userId => {
@@ -89,10 +83,6 @@ const List = ({ history }) => {
     setIngredient(event.target.value);
   };
 
-  const handleTranscript = string => {
-    setIngredient(string);
-  };
-
   const handleSubmit = async event => {
     event.preventDefault();
     const returnedIngredient = await addIngredient({
@@ -103,10 +93,6 @@ const List = ({ history }) => {
       setIngredients([...ingredients, returnedIngredient]);
       setIngredient('');
     }
-  };
-
-  const startedListening = name => {
-    setIngredient(name);
   };
 
   const addVoice = async tag => {
@@ -209,8 +195,13 @@ const List = ({ history }) => {
     };
   };
 
-  annyang.start();
-  if (currentUser) annyang.addCommands(returnCommands());
+  const startAnnyang = () => {
+    annyang.start();
+    annyang.addCommands(returnCommands());
+  };
+
+  // annyang.start();
+  // if (currentUser) annyang.addCommands(returnCommands());
 
   return (
     // INGREDIENT LIST FORM
@@ -233,6 +224,7 @@ const List = ({ history }) => {
                       value={ingredient}
                       name="name"
                       onChange={handleChange}
+                      required
                     />
                   </div>
                   <button
@@ -241,11 +233,18 @@ const List = ({ history }) => {
                     name="action"
                   >
                     Add Ingredient
+                    <i className="tiny material-icons">add_shopping_cart</i>
                   </button>
                 </div>
               </div>
             </div>
           </form>
+          <button
+            className="btn waves-effect waves-light grey center"
+            onClick={startAnnyang}
+          >
+            Start Listening
+          </button>
         </div>
       </div>
 

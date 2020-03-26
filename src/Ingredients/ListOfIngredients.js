@@ -6,7 +6,7 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
       {ingredients.map(ingredient => {
         return (
           <li className="collection-item" key={ingredient.id}>
-            <div className="center-align">
+            <div>
               {ingredient.name}
               <button
                 className="btn-floating btn-small waves-effect waves-light red secondary-content"
