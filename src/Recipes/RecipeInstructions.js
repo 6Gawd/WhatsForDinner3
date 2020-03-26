@@ -69,6 +69,7 @@ const RecipeInstructions = props => {
     }
   };
 
+  console.log('recipes');
   return (
     <div>
       <div className="container container-padding">
