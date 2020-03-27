@@ -6,7 +6,9 @@ import ListOfIngredients from './Ingredients/ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from './Speech/OutputSpeech';
 
-import ToastContainer from 'react-toastify';
+// import ToastContainer from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import Commands, { returnCommands } from './Speech/Commands';
 
 const List = ({ history }) => {
@@ -22,6 +24,39 @@ const List = ({ history }) => {
       annyang.abort();
     };
   }, []);
+
+  const addIngredientToast = () => {
+    toast.success('Added to list', {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  };
+
+  const deleteIngredientToast = () => {
+    toast.error('Removed from list', {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  };
+
+  const clearListToast = () => {
+    toast.error('Cleared your list', {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  };
 
   const getIngredients = async () => {
     try {
@@ -46,18 +81,21 @@ const List = ({ history }) => {
 
   const addIngredient = async ingredient => {
     try {
-    const currentIngredients = await getIngredients()
-    const names = currentIngredients.map(ingredient=>ingredient.name.toLowerCase());
+      const currentIngredients = await getIngredients();
+      const names = currentIngredients.map(ingredient =>
+        ingredient.name.toLowerCase()
+      );
       if (names.includes(ingredient.name.toLowerCase())) {
         trevor.text = `You have already added this item!`;
         speechSynth.speak(trevor);
-        return false
+        return false;
       } else {
         const newIngredient = { ...ingredient };
         await db
           .collection('ingredients')
           .add(ingredient)
           .then(obj => (newIngredient.id = obj.id));
+        addIngredientToast();
         return newIngredient;
       }
     } catch (error) {
@@ -74,6 +112,7 @@ const List = ({ history }) => {
       const updatedIngredients = ingredients.filter(
         ingredient => ingredient.id !== listIngredient.id
       );
+      deleteIngredientToast();
       setIngredients(updatedIngredients);
       trevor.text = `removed ${listIngredient.name}`;
       speechSynth.speak(trevor);
@@ -99,17 +138,17 @@ const List = ({ history }) => {
   };
 
   const addWithVoice = async tag => {
-      const returned = await addIngredient({
-        name: tag,
-        userId: currentUser.uid
-      });
-      if(returned){
-        getIngredients();
-        //Make voice playback
-        trevor.text = `got ${tag}`;
-        speechSynth.speak(trevor);
-        setIngredient('');
-      }
+    const returned = await addIngredient({
+      name: tag,
+      userId: currentUser.uid
+    });
+    if (returned) {
+      getIngredients();
+      //Make voice playback
+      trevor.text = `got ${tag}`;
+      speechSynth.speak(trevor);
+      setIngredient('');
+    }
   };
 
   const deleteWithVoice = async tag => {
@@ -163,22 +202,23 @@ const List = ({ history }) => {
     const currentList = await getIngredients();
     if (currentList.length < 1) {
       trevor.text = `your list is empty`;
-      speechSynth.speak(trevor)
+      speechSynth.speak(trevor);
     } else {
-    await db
-      .collection('ingredients')
-      .where('userId', '==', currentUser.uid)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          db.collection('ingredients')
-            .doc(doc.id)
-            .delete();
+      await db
+        .collection('ingredients')
+        .where('userId', '==', currentUser.uid)
+        .get()
+        .then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            db.collection('ingredients')
+              .doc(doc.id)
+              .delete();
+          });
         });
-      });
-    trevor.text = `removing your list`;
-    speechSynth.speak(trevor);
-    setIngredients([]);
+      trevor.text = `removing your list`;
+      speechSynth.speak(trevor);
+      setIngredients([]);
+      clearListToast();
     }
   };
 
@@ -197,21 +237,21 @@ const List = ({ history }) => {
 
   const initCommands = () => {
     return {
-      "hey trevor": ()=>{
-        startAnnyang()
-        trevor.text = `at your service`
-        speechSynth.speak(trevor)
+      'hey trevor': () => {
+        startAnnyang();
+        trevor.text = `at your service`;
+        speechSynth.speak(trevor);
       },
-      "trevor stop": ()=> stopListening()
-    }
-  }
-  annyang.addCommands(initCommands())
+      'trevor stop': () => stopListening()
+    };
+  };
+  annyang.addCommands(initCommands());
 
   const stopListening = () => {
-    const initialCommands = Object.keys(activatedCommands())
+    const initialCommands = Object.keys(activatedCommands());
     //Removes all the initial commands
-    annyang.removeCommands(initialCommands)
-  }
+    annyang.removeCommands(initialCommands);
+  };
 
   const startAnnyang = () => {
     annyang.addCommands(activatedCommands());
@@ -253,13 +293,13 @@ const List = ({ history }) => {
             </div>
           </form>
           <button
-                    className="btn waves-effect waves-light red center"
-                    type="submit"
-                    name="action"
-                    onClick={() => clearListWithVoice()}
-                  >
-                    Clear List
-                  </button>
+            className="btn waves-effect waves-light red center"
+            type="submit"
+            name="action"
+            onClick={() => clearListWithVoice()}
+          >
+            Clear List
+          </button>
           <button
             className="btn waves-effect waves-light grey center"
             onClick={startAnnyang}
@@ -293,7 +333,6 @@ const List = ({ history }) => {
       </div>
     </div>
   );
-
 };
 
 export default List;

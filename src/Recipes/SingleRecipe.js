@@ -3,6 +3,8 @@ import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import axios from 'axios';
 import Modal from 'react-responsive-modal';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SingleRecipe = ({ recipe }) => {
   const {
@@ -21,6 +23,17 @@ const SingleRecipe = ({ recipe }) => {
   const recipeURLEnd =
     '/analyzedInstructions?apiKey=9dbfb748dfa44db2becd40388c22f59c';
 
+  const addToFavoritesToast = () => {
+    toast.success('Added to favorite recipes', {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  };
+
   const addRecipeToFavorite = async () => {
     const newFavoriteRecipe = {
       title,
@@ -32,6 +45,7 @@ const SingleRecipe = ({ recipe }) => {
       const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
 
       newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
+      addToFavoritesToast();
     } catch (error) {
       console.log('No Recipe', error);
     }
@@ -60,8 +74,8 @@ const SingleRecipe = ({ recipe }) => {
   const addToFavoriteFromModal = async modalObject => {
     try {
       modalObject.ingredients = missedIngredients.concat(usedIngredients);
-      console.log(modalObject);
       await db.collection('favoriteRecipes').add(modalObject);
+      addToFavoritesToast();
     } catch (error) {
       console.error('Error adding to favorite recipes');
     }

@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../Auth';
 import { db } from '../base';
 import RecipeDisplay from './RecipeDisplay';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const FavoriteRecipes = () => {
   const { currentUser } = useContext(AuthContext);
@@ -10,6 +12,17 @@ const FavoriteRecipes = () => {
   useEffect(() => {
     if (currentUser) getRecipes(currentUser.uid);
   }, [currentUser]);
+
+  const removeFromFavoritesToast = () => {
+    toast.error('Removed from favorite recipes', {
+      position: 'bottom-center',
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  };
 
   const getRecipes = async userId => {
     try {
@@ -43,9 +56,7 @@ const FavoriteRecipes = () => {
         .delete();
       const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
       setRecipes(updatedRecipes);
-      // M.toast({
-      //   html: toastHTML
-      // });
+      removeFromFavoritesToast();
     } catch (error) {
       console.error('Error deleting recipe', error);
     }
