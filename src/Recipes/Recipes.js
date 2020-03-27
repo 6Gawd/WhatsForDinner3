@@ -15,7 +15,7 @@ const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    gotIngredients();
+    getIngredients();
   }, []);
   //Make it so that it auto renders recipes when it loads on the page,
   useEffect(() => {
@@ -23,7 +23,7 @@ const Recipes = () => {
     getRecipes(ingredients);
   }, [ingredients]);
 
-  const gotIngredients = async () => {
+  const getIngredients = async () => {
     try {
       const ingredients = [];
       await db

@@ -35,6 +35,7 @@ const SingleRecipe = ({ recipe }) => {
     } catch (error) {
       console.log('No Recipe', error);
     }
+    newFavoriteRecipe.ingredients = missedIngredients.concat(usedIngredients);
 
     await db.collection('favoriteRecipes').add(newFavoriteRecipe);
   };
@@ -58,6 +59,8 @@ const SingleRecipe = ({ recipe }) => {
 
   const addToFavoriteFromModal = async modalObject => {
     try {
+      modalObject.ingredients = missedIngredients.concat(usedIngredients);
+      console.log(modalObject);
       await db.collection('favoriteRecipes').add(modalObject);
     } catch (error) {
       console.error('Error adding to favorite recipes');
