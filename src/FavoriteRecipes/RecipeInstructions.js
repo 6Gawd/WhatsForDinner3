@@ -3,6 +3,12 @@ import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
+import {
+  readyToBeginToast,
+  repeatCurrentStepsToast,
+  nextStepsToast,
+  previousStepsToast
+} from '../ToastNotifications/Toasts';
 
 const RecipeInstructions = props => {
   const { currentUser } = useContext(AuthContext);
@@ -19,12 +25,18 @@ const RecipeInstructions = props => {
     annyang.start();
     trevor.text = "Let's Start Cooking, Are you Ready?";
     speechSynth.speak(trevor);
+    readyToBeginToast();
   }, []);
 
   const returnCommands = () => {
     let steps = 0;
     return {
-      'Yes I am': () => rec(steps),
+      'Yes I am': () => {
+        rec(steps);
+        repeatCurrentStepsToast();
+        nextStepsToast();
+        previousStepsToast();
+      },
       'Go to next step': () => {
         steps++;
         rec(steps);

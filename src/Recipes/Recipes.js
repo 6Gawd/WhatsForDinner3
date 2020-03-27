@@ -9,7 +9,7 @@ import SingleRecipe from './SingleRecipe';
 const Recipes = () => {
   const recipeURLStart =
     'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
-  const recipeURLEnd = `&number=6&apiKey=9dbfb748dfa44db2becd40388c22f59c`;
+  const recipeURLEnd = `&number=6&apiKey=ea67a4bdaf834f4b86818a43a58433eb`;
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);

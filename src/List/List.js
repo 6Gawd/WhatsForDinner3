@@ -11,42 +11,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   addIngredientToast,
   deleteIngredientToast,
-  clearListToast
+  clearListToast,
+  initTrevorToast,
+  instructionsToast,
+  deleteInstructionsToast,
+  getRecipesToast
 } from '../ToastNotifications/Toasts';
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
-  // const [ active, setActive ] = useState(false);
-
-  const instructionsToast = () => {
-    toast.info(
-      'Test out these commands:' +
-        '\n' +
-        'To activate our assistant say "Hey Trevor"' +
-        '\n' +
-        'You can add any food item you like to your list. "Say add Cheese"' +
-        '\n' +
-        'You can also delete any food item off of your list. Say "delete Cheese"' +
-        '\n' +
-        'If you want to get some recipes using your current shopping list, say "get recipes"' +
-        '\n' +
-        'If you want to remove your current shopping list, say "clear my list"',
-      {
-        position: 'bottom-left',
-        autoClose: false,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      }
-    );
-  };
 
   useEffect(() => {
     getIngredients();
-    instructionsToast();
+    initTrevorToast();
     annyang.start();
     return () => {
       annyang.abort();
@@ -240,10 +219,12 @@ const List = ({ history }) => {
 
   const initCommands = () => {
     return {
-      'hey trevor': () => {
+      'hey Trevor': () => {
         startAnnyang();
         trevor.text = `at your service`;
         speechSynth.speak(trevor);
+        instructionsToast();
+        deleteInstructionsToast();
       },
       'trevor stop': () => stopListening()
     };
@@ -303,12 +284,6 @@ const List = ({ history }) => {
             onClick={() => clearListWithVoice()}
           >
             Clear List
-          </button>
-          <button
-            className="btn waves-effect waves-light grey center"
-            onClick={startAnnyang}
-          >
-            Start Listening
           </button>
         </div>
       </div>
