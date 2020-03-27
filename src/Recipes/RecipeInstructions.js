@@ -4,11 +4,13 @@ import { db } from '../base';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
-
 const RecipeInstructions = props => {
   const { currentUser } = useContext(AuthContext);
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedRecipe, setSelectedRecipe] = useState({ steps: [] });
+  const [selectedRecipe, setSelectedRecipe] = useState({
+    steps: [],
+    ingredients: []
+  });
 
   const id = props.match.params.id;
 
@@ -70,7 +72,6 @@ const RecipeInstructions = props => {
     }
   };
 
-  console.log('recipes');
   return (
     <div>
       <div className="container container-padding">
@@ -84,6 +85,18 @@ const RecipeInstructions = props => {
           </div>
         </div>
       </div>
+      {/* INGREDIENTS */}
+      <div className="container container-padding">
+        <div className="col 12 m7">
+          <div className="card horizontal">
+            <h6 className="left-align">
+              Ingredients: {selectedRecipe.ingredients.join(', ')}
+            </h6>
+          </div>
+        </div>
+      </div>
+
+      {/* INSTRUCTIONS */}
       <div className="container container-padding">
         <div className="col 12 m7">
           <div className="card horizontal">
