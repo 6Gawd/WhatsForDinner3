@@ -6,16 +6,16 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom';
-import Profile from './Profile';
-import Login from './Login';
-import SignUp from './SignUp';
+import Profile from './User/Profile';
+import Login from './User/Login';
+import SignUp from './User/SignUp';
 import Recipes from './Recipes/Recipes';
-import List from './List';
+import List from './List/List';
 import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
 import NavBar from './Navbar';
-import FavoriteRecipes from './Recipes/FavoriteRecipes';
-import RecipeInstructions from './Recipes/RecipeInstructions';
+import FavoriteRecipes from './FavoriteRecipes/FavoriteRecipes';
+import RecipeInstructions from './FavoriteRecipes/RecipeInstructions';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

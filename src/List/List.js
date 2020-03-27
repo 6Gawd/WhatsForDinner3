@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { AuthContext } from './Auth.js';
-import { db } from './base';
+import { AuthContext } from '../Auth.js';
+import { db } from '../base';
 
-import ListOfIngredients from './Ingredients/ListOfIngredients';
+import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
-import trevor, { speechSynth } from './Speech/OutputSpeech';
+import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,7 +12,7 @@ import {
   addIngredientToast,
   deleteIngredientToast,
   clearListToast
-} from './ToastNotifications/Toasts';
+} from '../ToastNotifications/Toasts';
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
