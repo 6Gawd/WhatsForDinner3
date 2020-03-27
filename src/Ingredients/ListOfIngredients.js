@@ -13,7 +13,7 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
                 className="btn-floating btn-small waves-effect waves-light red secondary-content"
                 type="button"
                 name="action"
-                onClick={() => deleteIngredient(ingredient.id)}
+                onClick={() => deleteIngredient(ingredient)}
               >
                 <i className="material-icons">delete</i>
               </button>

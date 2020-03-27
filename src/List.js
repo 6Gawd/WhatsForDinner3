@@ -16,28 +16,29 @@ const List = ({ history }) => {
   // const [ active, setActive ] = useState(false);
 
   useEffect(() => {
-    gotIngredients(currentUser.uid);
+    getIngredients();
+    annyang.start();
     return () => {
       annyang.abort();
     };
-  }, [currentUser]);
+  }, []);
 
-  const gotIngredients = async userId => {
+  const getIngredients = async () => {
     try {
-      const ingredients = [];
+      const fetchIngredients = [];
       await db
         .collection('ingredients')
-        .where('userId', '==', userId)
+        .where('userId', '==', currentUser.uid)
         .get()
         .then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
             const item = doc.data();
             item.id = doc.id;
-            ingredients.push(item);
+            fetchIngredients.push(item);
           });
         });
-      setIngredients(ingredients);
-      return ingredients;
+      setIngredients(fetchIngredients);
+      return fetchIngredients;
     } catch (error) {
       console.error('No Ingredients', error);
     }
@@ -45,13 +46,12 @@ const List = ({ history }) => {
 
   const addIngredient = async ingredient => {
     try {
-      let names = [];
-      for (let i = 0; i < ingredients.length; i++) {
-        names.push(ingredients[i].name.toLowerCase());
-      }
+    const currentIngredients = await getIngredients()
+    const names = currentIngredients.map(ingredient=>ingredient.name.toLowerCase());
       if (names.includes(ingredient.name.toLowerCase())) {
         trevor.text = `You have already added this item!`;
         speechSynth.speak(trevor);
+        return false
       } else {
         const newIngredient = { ...ingredient };
         await db
@@ -65,16 +65,18 @@ const List = ({ history }) => {
     }
   };
 
-  const deleteIngredient = async ingredientId => {
+  const deleteIngredient = async listIngredient => {
     try {
       await db
         .collection('ingredients')
-        .doc(ingredientId)
+        .doc(listIngredient.id)
         .delete();
       const updatedIngredients = ingredients.filter(
-        ingredient => ingredient.id !== ingredientId
+        ingredient => ingredient.id !== listIngredient.id
       );
       setIngredients(updatedIngredients);
+      trevor.text = `removed ${listIngredient.name}`;
+      speechSynth.speak(trevor);
     } catch (error) {
       console.error('Error deleting ingredient', error);
     }
@@ -96,29 +98,21 @@ const List = ({ history }) => {
     }
   };
 
-  const addVoice = async tag => {
-    const currentIngredients = await gotIngredients(currentUser.uid);
-    let names = [];
-    for (let i = 0; i < currentIngredients.length; i++) {
-      names.push(currentIngredients[i].name.toLowerCase());
-    }
-    if (names.includes(tag)) {
-      trevor.text = `You have already added this item!`;
-      speechSynth.speak(trevor);
-    } else {
-      await addIngredient({
+  const addWithVoice = async tag => {
+      const returned = await addIngredient({
         name: tag,
         userId: currentUser.uid
       });
-      gotIngredients(currentUser.uid);
-      //Make voice playback
-      trevor.text = `got ${tag}`;
-      speechSynth.speak(trevor);
-      setIngredient('');
-    }
+      if(returned){
+        getIngredients();
+        //Make voice playback
+        trevor.text = `got ${tag}`;
+        speechSynth.speak(trevor);
+        setIngredient('');
+      }
   };
 
-  const deleteVoice = async tag => {
+  const deleteWithVoice = async tag => {
     try {
       const id = await db
         .collection('ingredients')
@@ -131,7 +125,7 @@ const List = ({ history }) => {
           .collection('ingredients')
           .doc(id)
           .delete();
-        await gotIngredients(currentUser.uid);
+        await getIngredients();
       }
       trevor.text = `removed ${tag}`;
       speechSynth.speak(trevor);
@@ -141,8 +135,8 @@ const List = ({ history }) => {
     }
   };
 
-  const getRecipes = async () => {
-    const ingre = [];
+  const getRecipesWithVoice = async () => {
+    const ingredients = [];
     await db
       .collection('ingredients')
       .where('userId', '==', currentUser.uid)
@@ -151,11 +145,11 @@ const List = ({ history }) => {
         querySnapshot.forEach(function(doc) {
           const item = doc.data();
           item.id = doc.id;
-          ingre.push(item);
+          ingredients.push(item);
         });
       });
-    //for some reason, if ingre is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
-    if (!ingre[0]) {
+    //for some reason, if ingredients is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
+    if (!ingredients[0]) {
       trevor.text = `you need to add some ingredients first`;
       speechSynth.speak(trevor);
     } else {
@@ -165,10 +159,12 @@ const List = ({ history }) => {
     }
   };
 
-  const clearList = async () => {
-    trevor.text = `removing your list`;
-    speechSynth.speak(trevor);
-    //When you do the querySnapshot, you can call firebase methods inside of the collection you get.
+  const clearListWithVoice = async () => {
+    const currentList = await getIngredients();
+    if (currentList.length < 1) {
+      trevor.text = `your list is empty`;
+      speechSynth.speak(trevor)
+    } else {
     await db
       .collection('ingredients')
       .where('userId', '==', currentUser.uid)
@@ -180,32 +176,48 @@ const List = ({ history }) => {
             .delete();
         });
       });
+    trevor.text = `removing your list`;
+    speechSynth.speak(trevor);
     setIngredients([]);
+    }
   };
 
-  const returnCommands = () => {
+  const activatedCommands = () => {
     return {
       'add *tag': tag => {
-        addVoice(tag);
+        addWithVoice(tag);
       },
       'delete *tag': tag => {
-        deleteVoice(tag);
+        deleteWithVoice(tag);
       },
-      'get recipes': () => getRecipes(),
-      'clear my list': () => clearList()
+      'get recipes': () => getRecipesWithVoice(),
+      'clear my list': () => clearListWithVoice()
     };
   };
 
+  const initCommands = () => {
+    return {
+      "hey trevor": ()=>{
+        startAnnyang()
+        trevor.text = `at your service`
+        speechSynth.speak(trevor)
+      },
+      "trevor stop": ()=> stopListening()
+    }
+  }
+  annyang.addCommands(initCommands())
+
+  const stopListening = () => {
+    const initialCommands = Object.keys(activatedCommands())
+    //Removes all the initial commands
+    annyang.removeCommands(initialCommands)
+  }
+
   const startAnnyang = () => {
-    annyang.start();
-    annyang.addCommands(returnCommands());
+    annyang.addCommands(activatedCommands());
   };
 
-  // annyang.start();
-  // if (currentUser) annyang.addCommands(returnCommands());
-
   return (
-    // INGREDIENT LIST FORM
     <div>
       <div className="container col s12 m10 offset-m1 center">
         <div className="card-panel">
@@ -240,6 +252,14 @@ const List = ({ history }) => {
               </div>
             </div>
           </form>
+          <button
+                    className="btn waves-effect waves-light red center"
+                    type="submit"
+                    name="action"
+                    onClick={() => clearListWithVoice()}
+                  >
+                    Clear List
+                  </button>
           <button
             className="btn waves-effect waves-light grey center"
             onClick={startAnnyang}

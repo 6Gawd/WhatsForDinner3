@@ -30,9 +30,9 @@ const RecipeInstructions = props => {
       'repeat current step': () => {
         rec(steps);
       },
-      'Trevor stop': () => {
-        annyang.pause();
-      },
+      // 'trevor stop': () => {
+      //   annyang.pause();
+      // },
       'go to previous step': () => {
         steps--;
         rec(steps);

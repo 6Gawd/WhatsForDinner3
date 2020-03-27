@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import Profile from './Profile';
 import Login from './Login';
 import SignUp from './SignUp';
-import Recipes from './Recipes';
+import Recipes from './Recipes/Recipes';
 import List from './List';
 import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
