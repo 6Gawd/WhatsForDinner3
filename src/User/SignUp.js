@@ -1,8 +1,8 @@
 import React, { useCallback, useContext } from 'react';
 import { withRouter, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { auth } from './base';
-import { AuthContext } from './Auth.js';
+import { auth } from '../base';
+import { AuthContext } from '../Auth.js';
 
 const SignUp = ({ history }) => {
   const handleSignUp = useCallback(

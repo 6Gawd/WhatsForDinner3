@@ -4,6 +4,7 @@ import { db } from '../base';
 import RecipeDisplay from './RecipeDisplay';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 
 const FavoriteRecipes = () => {
   const { currentUser } = useContext(AuthContext);
@@ -12,17 +13,6 @@ const FavoriteRecipes = () => {
   useEffect(() => {
     if (currentUser) getRecipes(currentUser.uid);
   }, [currentUser]);
-
-  const removeFromFavoritesToast = () => {
-    toast.error('Removed from favorite recipes', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-  };
 
   const getRecipes = async userId => {
     try {

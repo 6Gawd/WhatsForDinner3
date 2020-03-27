@@ -5,6 +5,7 @@ import axios from 'axios';
 import Modal from 'react-responsive-modal';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 
 const SingleRecipe = ({ recipe }) => {
   const {
@@ -21,18 +22,7 @@ const SingleRecipe = ({ recipe }) => {
   const [modalInstructions, setModalInstructions] = useState({ steps: [] });
   const recipeURLStart = 'https://api.spoonacular.com/recipes/';
   const recipeURLEnd =
-    '/analyzedInstructions?apiKey=9dbfb748dfa44db2becd40388c22f59c';
-
-  const addToFavoritesToast = () => {
-    toast.success('Added to favorite recipes', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-  };
+    '/analyzedInstructions?apiKey=ea67a4bdaf834f4b86818a43a58433eb';
 
   const addRecipeToFavorite = async () => {
     const newFavoriteRecipe = {

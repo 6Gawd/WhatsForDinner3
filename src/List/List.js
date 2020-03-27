@@ -1,15 +1,18 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { AuthContext } from './Auth.js';
-import { db } from './base';
+import { AuthContext } from '../Auth.js';
+import { db } from '../base';
 
-import ListOfIngredients from './Ingredients/ListOfIngredients';
+import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
-import trevor, { speechSynth } from './Speech/OutputSpeech';
+import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
-// import ToastContainer from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import Commands, { returnCommands } from './Speech/Commands';
+import {
+  addIngredientToast,
+  deleteIngredientToast,
+  clearListToast
+} from '../ToastNotifications/Toasts';
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
@@ -17,46 +20,38 @@ const List = ({ history }) => {
   const [ingredient, setIngredient] = useState('');
   // const [ active, setActive ] = useState(false);
 
+  const instructionsToast = () => {
+    toast.info(
+      'Test out these commands:' +
+        '\n' +
+        'To activate our assistant say "Hey Trevor"' +
+        '\n' +
+        'You can add any food item you like to your list. "Say add Cheese"' +
+        '\n' +
+        'You can also delete any food item off of your list. Say "delete Cheese"' +
+        '\n' +
+        'If you want to get some recipes using your current shopping list, say "get recipes"' +
+        '\n' +
+        'If you want to remove your current shopping list, say "clear my list"',
+      {
+        position: 'bottom-left',
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      }
+    );
+  };
+
   useEffect(() => {
     getIngredients();
+    instructionsToast();
     annyang.start();
     return () => {
       annyang.abort();
     };
   }, []);
-
-  const addIngredientToast = () => {
-    toast.success('Added to list', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-  };
-
-  const deleteIngredientToast = () => {
-    toast.error('Removed from list', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-  };
-
-  const clearListToast = () => {
-    toast.error('Cleared your list', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-  };
 
   const getIngredients = async () => {
     try {
@@ -167,6 +162,7 @@ const List = ({ history }) => {
         await getIngredients();
       }
       trevor.text = `removed ${tag}`;
+      deleteIngredientToast();
       speechSynth.speak(trevor);
     } catch (error) {
       trevor.text = `couldnt find ${tag}`;
@@ -196,6 +192,12 @@ const List = ({ history }) => {
       speechSynth.speak(trevor);
       history.push('/recipes');
     }
+  };
+
+  const getFavoriteRecipesWithVoice = async () => {
+    trevor.text = `getting your favorite recipes`;
+    speechSynth.speak(trevor);
+    history.push('/favoriterecipes');
   };
 
   const clearListWithVoice = async () => {
@@ -231,6 +233,7 @@ const List = ({ history }) => {
         deleteWithVoice(tag);
       },
       'get recipes': () => getRecipesWithVoice(),
+      'get my favorite recipes': () => getFavoriteRecipesWithVoice(),
       'clear my list': () => clearListWithVoice()
     };
   };
@@ -245,6 +248,7 @@ const List = ({ history }) => {
       'trevor stop': () => stopListening()
     };
   };
+
   annyang.addCommands(initCommands());
 
   const stopListening = () => {

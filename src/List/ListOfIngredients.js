@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
-
   return ingredients.length ? (
     <ul className="collection">
       {ingredients.map(ingredient => {
@@ -25,7 +24,6 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
   ) : (
     <p>No Ingredients Yet</p>
   );
-
 };
 
 export default ListOfIngredients;
