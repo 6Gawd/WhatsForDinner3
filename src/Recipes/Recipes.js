@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 // import { auth } from './base';
-import { AuthContext } from './Auth.js';
-import { db } from './base';
+import { AuthContext } from '../Auth.js';
+import { db } from '../base';
 import axios from 'axios';
-import SingleRecipe from './Recipes/SingleRecipe';
-import './secrets';
+import SingleRecipe from './SingleRecipe';
+// import './secrets';
 
 const Recipes = () => {
   const recipeURLStart =
@@ -15,20 +15,20 @@ const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    gotIngredients(currentUser.uid);
-  }, [currentUser]);
+    gotIngredients();
+  }, []);
   //Make it so that it auto renders recipes when it loads on the page,
   useEffect(() => {
     //Add React Loading here
     getRecipes(ingredients);
   }, [ingredients]);
 
-  const gotIngredients = async userId => {
+  const gotIngredients = async () => {
     try {
       const ingredients = [];
       await db
         .collection('ingredients')
-        .where('userId', '==', userId)
+        .where('userId', '==', currentUser.uid)
         .get()
         .then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
