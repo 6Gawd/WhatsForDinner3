@@ -6,7 +6,6 @@ import ListOfIngredients from './Ingredients/ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from './Speech/OutputSpeech';
 
-// import ToastContainer from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import Commands, { returnCommands } from './Speech/Commands';
@@ -245,6 +244,7 @@ const List = ({ history }) => {
       'trevor stop': () => stopListening()
     };
   };
+
   annyang.addCommands(initCommands());
 
   const stopListening = () => {
