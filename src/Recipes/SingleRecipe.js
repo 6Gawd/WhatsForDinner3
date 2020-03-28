@@ -7,14 +7,14 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 
-const SingleRecipe = ({ recipe }) => {
+const SingleRecipe = ({ recipe, idx }) => {
   const {
     id,
     title,
     image,
     missedIngredients,
     usedIngredients,
-    unusedIngredients
+    unusedIngredients,
   } = recipe;
 
   const { currentUser } = useContext(AuthContext);
@@ -78,7 +78,11 @@ const SingleRecipe = ({ recipe }) => {
         <div className="card">
           <div className="card-image">
             <img src={image} alt={title} />
-            <span className="card-title">{title}</span>
+            <span className="card-title">
+              <a className="btn-floating halfway-fab waves-effect waves-light blue left">
+                {idx+1}
+            </a>
+              </span>
             <a className="btn-floating halfway-fab waves-effect waves-light red">
               <i className="material-icons" onClick={addRecipeToFavorite}>
                 favorite
@@ -86,6 +90,7 @@ const SingleRecipe = ({ recipe }) => {
             </a>
           </div>
           <div className="card-content left-align">
+            <h6 className="center-align">{title}</h6>
             <ul>
               <li>
                 <i className="tiny material-icons">check_box</i>
@@ -104,10 +109,10 @@ const SingleRecipe = ({ recipe }) => {
           <div className="card-action">
             <button
               data-target={`#${id}`}
-              className="btn modal-trigger"
+              className="btn modal-trigger indigo"
               onClick={() => getInstructions()}
             >
-              View Instructions
+              Instructions
             </button>
             <Modal open={open} onClose={() => setOpen(false)}>
               <h4>{modalInstructions.title}</h4>

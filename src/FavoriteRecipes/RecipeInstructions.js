@@ -48,9 +48,6 @@ const RecipeInstructions = (props) => {
 			'repeat current step': () => {
 				rec(steps);
 			},
-			// 'trevor stop': () => {
-			//   annyang.pause();
-			// },
 			'go to previous step': () => {
 				steps--;
 				rec(steps);

@@ -22,6 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 toast.configure();
 
 const App = () => {
+
   return (
     <AuthProvider>
       <Router>
