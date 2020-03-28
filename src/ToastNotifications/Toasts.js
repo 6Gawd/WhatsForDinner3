@@ -6,7 +6,7 @@ export const initTrevorToast = () => {
     'Test out these commands: To activate our assistant say, "Hey Trevor!"',
     {
       position: 'bottom-left',
-      autoClose: false,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -17,60 +17,10 @@ export const initTrevorToast = () => {
 
 export const instructionsToast = () => {
   toast.info(
-    'You can add any food item you like to your list. "Say add Cheese"',
+    'For assistance, you can say "Show Instructions" on every page',
     {
       position: 'bottom-left',
-      autoClose: false,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    }
-  );
-  toast.info(
-    'You can also delete any food item off of your list. Say "delete Cheese"',
-    {
-      position: 'bottom-left',
-      autoClose: false,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    }
-  );
-};
-
-export const deleteInstructionsToast = () => {
-  toast.info(
-    'If you want to clear your current shopping list, say "clear my list"',
-    {
-      position: 'bottom-left',
-      autoClose: false,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    }
-  );
-};
-
-export const getRecipesToast = () => {
-  toast.info(
-    'If you want to get some recipes using your current shopping list, say "get recipes"',
-    {
-      position: 'bottom-left',
-      autoClose: false,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    }
-  );
-  toast.info(
-    'If you want to go to your favorite recipes, say "get favorite recipes"',
-    {
-      position: 'bottom-left',
-      autoClose: false,
+      autoClose: 6000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

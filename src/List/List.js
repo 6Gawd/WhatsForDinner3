@@ -14,14 +14,16 @@ import {
 	clearListToast,
 	initTrevorToast,
 	instructionsToast,
-	deleteInstructionsToast,
-	getRecipesToast
 } from '../ToastNotifications/Toasts';
+import { listInstructions } from '../Speech/Commands'
+
+import Modal from 'react-responsive-modal'
 
 const List = ({ history }) => {
 	const { currentUser } = useContext(AuthContext);
 	const [ ingredients, setIngredients ] = useState([]);
 	const [ ingredient, setIngredient ] = useState('');
+	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
 		getIngredients();
@@ -177,7 +179,6 @@ const List = ({ history }) => {
 				trevor.text = `at your service`;
 				speechSynth.speak(trevor);
 				instructionsToast();
-				deleteInstructionsToast();
 			},
 			'trevor stop': () => stopListening(),
 			'go to my list': () => {
@@ -189,6 +190,13 @@ const List = ({ history }) => {
       'go to my profile': () => {
         history.push("/profile")
       },
+			'show instructions': () => {
+				console.log("show instructions fired")
+				setOpen(true)
+			},
+			'close instructions': () => {
+				setOpen(false)
+			},
       'get recipes': () => {
         history.push("/recipes")
       },
@@ -242,21 +250,30 @@ const List = ({ history }) => {
 					>
 						Clear List
 					</button>
-				</div>
-			</div>
+					<div>
+					<button
+						className="btn waves-effect waves-light grey center"
+						type="submit"
+						name="action"
+						onClick={() => setOpen(true)}
+					>
+						Instructions
+						<i className="tiny material-icons">mic</i>
+						</button>
+						</div>
 
-			{/* need to make this look prettier later */}
 
-			<div className="container col s12 m10 offset-m1 center">
-				<div className="card-panel">
-					<h3>Test out these Commands!</h3>
-					<p>You can add any food item you like to your list. Say "add Cheese"</p>
-					<p>You can also delete any food item off of your list. Say "delete Cheese"</p>
-					<p>If you want to get some recipes using your current shopping list, say "get recipes"</p>
-					<p>If you want to remove your current shopping list, say "clear my list"</p>
-				</div>
+			<Modal open={open} onClose={() => setOpen(false)}>
+              <h4>Trevor's Commands</h4>
+              <ul>
+								 {listInstructions.map((instruction,i) =>
+									<li key={i}>{instruction}</li>
+									)}
+              </ul>
+            </Modal>
+						</div>
 			</div>
-		</div>
+			</div>
 	);
 };
 
