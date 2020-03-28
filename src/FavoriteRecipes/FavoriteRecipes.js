@@ -5,14 +5,41 @@ import RecipeDisplay from './RecipeDisplay';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
+import annyang from 'annyang';
 
-const FavoriteRecipes = () => {
+const FavoriteRecipes = ({history}) => {
   const { currentUser } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
     if (currentUser) getRecipes(currentUser.uid);
   }, [currentUser]);
+
+  useEffect(() => {
+    annyang.start();
+    annyang.addCommands(navbarCommands());
+    return () => {
+      annyang.removeCommands();
+      annyang.abort();
+    };
+  }, []);
+
+  const navbarCommands = () => {
+  	return {
+  		'go to my list': () => {
+        history.push("/list")
+      },
+      'go to my favorite recipes': () => {
+        history.push("/favoriterecipes")
+      },
+      'go to my profile': () => {
+        history.push("/profile")
+      },
+      'get recipes': () => {
+        history.push("/recipes")
+      },
+  	}
+  }
 
   const getRecipes = async userId => {
     try {

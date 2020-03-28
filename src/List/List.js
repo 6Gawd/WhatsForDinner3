@@ -65,6 +65,8 @@ const List = ({ history }) => {
 			} else {
 				const newIngredient = { ...ingredient };
 				await db.collection('ingredients').add(ingredient).then((obj) => (newIngredient.id = obj.id));
+				trevor.text = `got ${newIngredient.name}`;
+				speechSynth.speak(trevor);
 				addIngredientToast();
 				return newIngredient;
 			}
@@ -109,9 +111,6 @@ const List = ({ history }) => {
 		});
 		if (returned) {
 			getIngredients();
-			//Make voice playback
-			trevor.text = `got ${tag}`;
-			speechSynth.speak(trevor);
 			setIngredient('');
 		}
 	};
@@ -135,32 +134,6 @@ const List = ({ history }) => {
 			trevor.text = `couldnt find ${tag}`;
 			speechSynth.speak(trevor);
 		}
-	};
-
-	const getRecipesWithVoice = async () => {
-		const ingredients = [];
-		await db.collection('ingredients').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
-			querySnapshot.forEach(function(doc) {
-				const item = doc.data();
-				item.id = doc.id;
-				ingredients.push(item);
-			});
-		});
-		//for some reason, if ingredients is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
-		if (!ingredients[0]) {
-			trevor.text = `you need to add some ingredients first`;
-			speechSynth.speak(trevor);
-		} else {
-			trevor.text = `getting your recipes`;
-			speechSynth.speak(trevor);
-			history.push('/recipes');
-		}
-	};
-
-	const getFavoriteRecipesWithVoice = async () => {
-		trevor.text = `getting your favorite recipes`;
-		speechSynth.speak(trevor);
-		history.push('/favoriterecipes');
 	};
 
 	const clearListWithVoice = async () => {
@@ -193,8 +166,6 @@ const List = ({ history }) => {
 			'delete *tag': (tag) => {
 				deleteWithVoice(tag);
 			},
-			'get recipes': () => getRecipesWithVoice(),
-			'get my favorite recipes': () => getFavoriteRecipesWithVoice(),
 			'clear my list': () => clearListWithVoice()
 		};
 	};
@@ -208,7 +179,19 @@ const List = ({ history }) => {
 				instructionsToast();
 				deleteInstructionsToast();
 			},
-			'trevor stop': () => stopListening()
+			'trevor stop': () => stopListening(),
+			'go to my list': () => {
+        history.push("/list")
+      },
+      'go to my favorite recipes': () => {
+        history.push("/favoriterecipes")
+      },
+      'go to my profile': () => {
+        history.push("/profile")
+      },
+      'get recipes': () => {
+        history.push("/recipes")
+      },
 		};
 	};
 

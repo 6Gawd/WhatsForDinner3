@@ -4,9 +4,10 @@ import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import axios from 'axios';
 import SingleRecipe from './SingleRecipe';
-// import './secrets';
+import annyang from 'annyang';
+import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
-const Recipes = () => {
+const Recipes = ({ history }) => {
   const recipeURLStart =
     'https://api.spoonacular.com/recipes/findByIngredients?ingredients=';
   const recipeURLEnd = `&number=6&apiKey=ea67a4bdaf834f4b86818a43a58433eb`;
@@ -15,8 +16,24 @@ const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    getIngredients();
+    annyang.start();
+    annyang.addCommands(navbarCommands());
+
+    getIngredients().then(ingredients=>{
+    if (ingredients.length > 0) {
+      trevor.text = `getting your recipes`;
+      speechSynth.speak(trevor);
+    } else {
+      trevor.text = `add some ingredients first`;
+      speechSynth.speak(trevor);
+    }})
+
+    return () => {
+      annyang.removeCommands();
+      annyang.abort();
+    };
   }, []);
+
   //Make it so that it auto renders recipes when it loads on the page,
   useEffect(() => {
     //Add React Loading here
@@ -38,6 +55,7 @@ const Recipes = () => {
           });
         });
       setIngredients(ingredients);
+      return ingredients
     } catch (error) {
       console.error('No Ingredients', error);
     }
@@ -71,14 +89,31 @@ const Recipes = () => {
     }
   };
 
+  	const navbarCommands = () => {
+  	return {
+  		'go to my list': () => {
+        history.push("/list")
+      },
+      'go to my favorite recipes': () => {
+        history.push("/favoriterecipes")
+      },
+      'go to my profile': () => {
+        history.push("/profile")
+      },
+      'get recipes': () => {
+        history.push("/recipes")
+      },
+  	}
+  }
+
   return (
     <div className="col s12 l12">
       <div>
         <h1>Recipes</h1>
         <div className="container">
           <div className="row">
-            {recipes.map(recipe => (
-              <SingleRecipe key={recipe.id} recipe={recipe} />
+            {recipes.map((recipe, idx) => (
+              <SingleRecipe key={recipe.id} recipe={recipe} idx={idx} />
             ))}
           </div>
         </div>
