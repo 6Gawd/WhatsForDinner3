@@ -23,6 +23,7 @@ const RecipeInstructions = props => {
   useEffect(() => {
     getFavoriteRecipe(currentUser.uid);
     annyang.start();
+    annyang.addCommands(returnCommands());
     trevor.text = "Let's Start Cooking, Are you Ready?";
     speechSynth.speak(trevor);
     readyToBeginToast();
@@ -48,17 +49,12 @@ const RecipeInstructions = props => {
       'repeat current step': () => {
         rec(steps);
       },
-      // 'trevor stop': () => {
-      //   annyang.pause();
-      // },
       'go to previous step': () => {
         steps--;
         rec(steps);
       }
     };
   };
-
-  annyang.addCommands(returnCommands());
 
   const rec = async step => {
     const recipe = await db

@@ -1,9 +1,39 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import { auth } from '../base';
 import { AuthContext } from '../Auth.js';
+import annyang from 'annyang'
 
-const Profile = () => {
-  // const { currentUser } = useContext(AuthContext);
+const Profile = ({history}) => {
+
+  useEffect(() => {
+    annyang.start();
+    annyang.addCommands(navbarCommands());
+    return () => {
+      annyang.removeCommands();
+      annyang.abort();
+    };
+  }, []);
+
+  const navbarCommands = () => {
+  	return {
+  		'go to my list': () => {
+        history.push("/list")
+      },
+      'go to my favorite recipes': () => {
+        history.push("/favoriterecipes")
+      },
+      'go to my profile': () => {
+        history.push("/profile")
+      },
+      'get recipes': () => {
+        history.push("/recipes")
+      },
+      'sign out': () => {
+        auth.signOut()
+      }
+  	}
+  }
+
   return (
     <div>
       <h1>Profile</h1>

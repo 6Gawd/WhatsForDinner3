@@ -21,3 +21,13 @@ label {
 input {
   margin-left: 10px;
 }
+
+.img-resize {
+  height: 500px;
+  object-fit: cover;
+}
+
+.card.large .card-image {
+  max-height: 60%;
+  overflow: inherit;
+}

@@ -1,10 +1,19 @@
 export const speechSynth = window.speechSynthesis;
 
-let voice = speechSynthesis.getVoices().filter(function(voice) {
-	return voice.name == 'Google UK English Female';
-})[0];
+// const getVoice = async () => {
+// 	const voice = await window.speechSynth;
+// 	// .getVoices();
+// 	// // filter(function(name) {
+// 	// 	return name.name === 'Fiona';
+// 	// })[0];
+// 	return voice;
+// };
+// const tre = getVoice();
+// console.log(tre);
 let trevor = new SpeechSynthesisUtterance(`Default Text`);
-trevor.voice = voice;
+
+// trevor.voice = voice;
+// console.log(trevor.voice);
 
 export default trevor;
 

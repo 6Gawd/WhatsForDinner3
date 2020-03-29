@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import axios from 'axios';
@@ -6,8 +6,9 @@ import Modal from 'react-responsive-modal';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
+import annyang from 'annyang';
 
-const SingleRecipe = ({ recipe }) => {
+const SingleRecipe = ({ recipe, idx }) => {
   const {
     id,
     title,
@@ -16,6 +17,20 @@ const SingleRecipe = ({ recipe }) => {
     usedIngredients,
     unusedIngredients
   } = recipe;
+
+  const addToFavoriteCommands = {
+    ['bookmark recipe number ' + (idx + 1)]: () => {
+      addRecipeToFavorite();
+    }
+  };
+
+  useEffect(() => {
+    annyang.start();
+    annyang.addCommands(addToFavoriteCommands);
+    return () => {
+      annyang.removeCommands(['bookmark recipe number ' + (idx + 1)]);
+    };
+  }, []);
 
   const { currentUser } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
@@ -75,10 +90,14 @@ const SingleRecipe = ({ recipe }) => {
     // <div className="col s12 l12">
     <div>
       <div className="col s12 m6 l4">
-        <div className="card">
+        <div className="card large">
           <div className="card-image">
             <img src={image} alt={title} />
-            <span className="card-title">{title}</span>
+            <span className="card-title">
+              <a className="btn-floating halfway-fab waves-effect waves-light blue left">
+                {idx + 1}
+              </a>
+            </span>
             <a className="btn-floating halfway-fab waves-effect waves-light red">
               <i className="material-icons" onClick={addRecipeToFavorite}>
                 favorite
@@ -86,6 +105,7 @@ const SingleRecipe = ({ recipe }) => {
             </a>
           </div>
           <div className="card-content left-align">
+            <h6 className="center-align">{title}</h6>
             <ul>
               <li>
                 <i className="tiny material-icons">check_box</i>
@@ -107,7 +127,7 @@ const SingleRecipe = ({ recipe }) => {
               className="btn modal-trigger indigo"
               onClick={() => getInstructions()}
             >
-              View Instructions
+              Instructions
             </button>
             <Modal open={open} onClose={() => setOpen(false)}>
               <h4>{modalInstructions.title}</h4>

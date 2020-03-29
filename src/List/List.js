@@ -13,15 +13,17 @@ import {
   deleteIngredientToast,
   clearListToast,
   initTrevorToast,
-  instructionsToast,
-  deleteInstructionsToast,
-  getRecipesToast
+  instructionsToast
 } from '../ToastNotifications/Toasts';
+import { listInstructions } from '../Speech/Commands';
+
+import Modal from 'react-responsive-modal';
 
 const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getIngredients();
@@ -70,6 +72,8 @@ const List = ({ history }) => {
           .collection('ingredients')
           .add(ingredient)
           .then(obj => (newIngredient.id = obj.id));
+        trevor.text = `got ${newIngredient.name}`;
+        speechSynth.speak(trevor);
         addIngredientToast();
         return newIngredient;
       }
@@ -119,9 +123,6 @@ const List = ({ history }) => {
     });
     if (returned) {
       getIngredients();
-      //Make voice playback
-      trevor.text = `got ${tag}`;
-      speechSynth.speak(trevor);
       setIngredient('');
     }
   };
@@ -148,36 +149,6 @@ const List = ({ history }) => {
       trevor.text = `couldnt find ${tag}`;
       speechSynth.speak(trevor);
     }
-  };
-
-  const getRecipesWithVoice = async () => {
-    const ingredients = [];
-    await db
-      .collection('ingredients')
-      .where('userId', '==', currentUser.uid)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          const item = doc.data();
-          item.id = doc.id;
-          ingredients.push(item);
-        });
-      });
-    //for some reason, if ingredients is an empty array, it doesn't fire the if statement. Reading as if its "truthy"
-    if (!ingredients[0]) {
-      trevor.text = `you need to add some ingredients first`;
-      speechSynth.speak(trevor);
-    } else {
-      trevor.text = `getting your recipes`;
-      speechSynth.speak(trevor);
-      history.push('/recipes');
-    }
-  };
-
-  const getFavoriteRecipesWithVoice = async () => {
-    trevor.text = `getting your favorite recipes`;
-    speechSynth.speak(trevor);
-    history.push('/favoriterecipes');
   };
 
   const clearListWithVoice = async () => {
@@ -212,8 +183,6 @@ const List = ({ history }) => {
       'delete *tag': tag => {
         deleteWithVoice(tag);
       },
-      'get recipes': () => getRecipesWithVoice(),
-      'get my favorite recipes': () => getFavoriteRecipesWithVoice(),
       'clear my list': () => clearListWithVoice()
     };
   };
@@ -225,9 +194,27 @@ const List = ({ history }) => {
         trevor.text = `at your service`;
         speechSynth.speak(trevor);
         instructionsToast();
-        deleteInstructionsToast();
       },
-      'trevor stop': () => stopListening()
+      'trevor stop': () => stopListening(),
+      'go to my list': () => {
+        history.push('/list');
+      },
+      'go to my favorite recipes': () => {
+        history.push('/favoriterecipes');
+      },
+      'go to my profile': () => {
+        history.push('/profile');
+      },
+      'show instructions': () => {
+        console.log('show instructions fired');
+        setOpen(true);
+      },
+      'close instructions': () => {
+        setOpen(false);
+      },
+      'get recipes': () => {
+        history.push('/recipes');
+      }
     };
   };
 
@@ -289,29 +276,26 @@ const List = ({ history }) => {
             Clear List
             <i className="tiny material-icons right">delete_sweep</i>
           </button>
-        </div>
-      </div>
+          <div>
+            <button
+              className="btn waves-effect waves-light grey center"
+              type="submit"
+              name="action"
+              onClick={() => setOpen(true)}
+            >
+              Instructions
+              <i className="tiny material-icons right">mic</i>
+            </button>
+          </div>
 
-      {/* need to make this look prettier later */}
-
-      <div className="container col s12 m10 offset-m1 center">
-        <div className="card-panel">
-          <h3>Test out these Commands!</h3>
-          <p>
-            You can add any food item you like to your list. Say "add Cheese"
-          </p>
-          <p>
-            You can also delete any food item off of your list. Say "delete
-            Cheese"
-          </p>
-          <p>
-            If you want to get some recipes using your current shopping list,
-            say "get recipes"
-          </p>
-          <p>
-            If you want to remove your current shopping list, say "clear my
-            list"
-          </p>
+          <Modal open={open} onClose={() => setOpen(false)}>
+            <h4>Trevor's Commands</h4>
+            <ul>
+              {listInstructions.map((instruction, i) => (
+                <li key={i}>{instruction}</li>
+              ))}
+            </ul>
+          </Modal>
         </div>
       </div>
     </div>
