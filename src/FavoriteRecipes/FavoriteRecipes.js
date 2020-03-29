@@ -57,18 +57,20 @@ const FavoriteRecipes = () => {
       <div>
         <h1 className="center-align">Your Favorite Recipes</h1>
         <div className="container">
-          <div className="row">
-            {recipes.length ? (
-              recipes.map(recipe => (
-                <RecipeDisplay
-                  key={recipe.id}
-                  recipe={recipe}
-                  removeFromFavorites={removeFromFavorites}
-                />
-              ))
-            ) : (
-              <p>No Favorite Recipes yet</p>
-            )}
+          <div className="card-panel">
+            <div className="row">
+              {recipes.length ? (
+                recipes.map(recipe => (
+                  <RecipeDisplay
+                    key={recipe.id}
+                    recipe={recipe}
+                    removeFromFavorites={removeFromFavorites}
+                  />
+                ))
+              ) : (
+                <p>No Favorite Recipes yet</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

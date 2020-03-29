@@ -76,10 +76,12 @@ const Recipes = () => {
       <div>
         <h1>Recipes</h1>
         <div className="container">
-          <div className="row">
-            {recipes.map(recipe => (
-              <SingleRecipe key={recipe.id} recipe={recipe} />
-            ))}
+          <div className="card-panel">
+            <div className="row">
+              {recipes.map(recipe => (
+                <SingleRecipe key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -104,7 +104,7 @@ const SingleRecipe = ({ recipe }) => {
           <div className="card-action">
             <button
               data-target={`#${id}`}
-              className="btn modal-trigger"
+              className="btn modal-trigger indigo"
               onClick={() => getInstructions()}
             >
               View Instructions
