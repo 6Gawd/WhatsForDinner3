@@ -48,7 +48,6 @@ const SingleRecipe = ({ recipe, idx }) => {
     };
     try {
       const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
-
       newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
       addToFavoritesToast();
     } catch (error) {
@@ -87,7 +86,6 @@ const SingleRecipe = ({ recipe, idx }) => {
   };
 
   return (
-    // <div className="col s12 l12">
     <div>
       <div className="col s12 m6 l4">
         <div className="card large">
