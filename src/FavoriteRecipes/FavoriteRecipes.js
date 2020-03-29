@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 import annyang from 'annyang';
 
-const FavoriteRecipes = ({history}) => {
+const FavoriteRecipes = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
 
@@ -25,21 +25,21 @@ const FavoriteRecipes = ({history}) => {
   }, []);
 
   const navbarCommands = () => {
-  	return {
-  		'go to my list': () => {
-        history.push("/list")
+    return {
+      'go to my list': () => {
+        history.push('/list');
       },
       'go to my favorite recipes': () => {
-        history.push("/favoriterecipes")
+        history.push('/favoriterecipes');
       },
       'go to my profile': () => {
-        history.push("/profile")
+        history.push('/profile');
       },
       'get recipes': () => {
-        history.push("/recipes")
-      },
-  	}
-  }
+        history.push('/recipes');
+      }
+    };
+  };
 
   const getRecipes = async userId => {
     try {
@@ -84,18 +84,20 @@ const FavoriteRecipes = ({history}) => {
       <div>
         <h1 className="center-align">Your Favorite Recipes</h1>
         <div className="container">
-          <div className="row">
-            {recipes.length ? (
-              recipes.map(recipe => (
-                <RecipeDisplay
-                  key={recipe.id}
-                  recipe={recipe}
-                  removeFromFavorites={removeFromFavorites}
-                />
-              ))
-            ) : (
-              <p>No Favorite Recipes yet</p>
-            )}
+          <div className="card-panel">
+            <div className="row">
+              {recipes.length ? (
+                recipes.map(recipe => (
+                  <RecipeDisplay
+                    key={recipe.id}
+                    recipe={recipe}
+                    removeFromFavorites={removeFromFavorites}
+                  />
+                ))
+              ) : (
+                <p>No Favorite Recipes yet</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

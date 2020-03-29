@@ -14,7 +14,7 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
                 name="action"
                 onClick={() => deleteIngredient(ingredient)}
               >
-                <i className="material-icons">delete</i>
+                <i className="material-icons right">delete</i>
               </button>
             </div>
           </li>

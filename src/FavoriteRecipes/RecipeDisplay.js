@@ -10,7 +10,7 @@ const RecipeDisplay = ({ recipe, removeFromFavorites }) => {
         <div className="card">
           <div className="card-image">
             <img src={image} alt={title} />
-            <span className="card-title">{title}</span>
+            <span className="card-title card-title-black">{title}</span>
             <a className="btn-floating halfway-fab waves-effect waves-light red">
               <i
                 className="material-icons"
