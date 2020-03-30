@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 import annyang from 'annyang';
+import trevor, {speechSynth} from '../Speech/OutputSpeech'
 
 const SingleRecipe = ({ recipe, idx }) => {
   const {
@@ -21,11 +22,12 @@ const SingleRecipe = ({ recipe, idx }) => {
   const addToFavoriteCommands = {
     ['bookmark recipe number ' + (idx + 1)]: () => {
       addRecipeToFavorite();
+      trevor.text = `bookmarked recipe ${idx + 1}`
+      speechSynth.speak(trevor)
     }
   };
 
   useEffect(() => {
-    annyang.start();
     annyang.addCommands(addToFavoriteCommands);
     return () => {
       annyang.removeCommands(['bookmark recipe number ' + (idx + 1)]);

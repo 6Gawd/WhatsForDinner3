@@ -5,9 +5,8 @@ import RecipeDisplay from './RecipeDisplay';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
-// import annyang from 'annyang';
 
-const FavoriteRecipes = () => {
+const FavoriteRecipes = ({history}) => {
 	const { currentUser } = useContext(AuthContext);
 	const [ recipes, setRecipes ] = useState([]);
 
@@ -57,10 +56,12 @@ const FavoriteRecipes = () => {
 					<div className="card-panel">
 						<div className="row">
 							{recipes.length ? (
-								recipes.map((recipe) => (
+								recipes.map((recipe, idx) => (
 									<RecipeDisplay
 										key={recipe.id}
+                    idx={idx}
 										recipe={recipe}
+                    history={history}
 										removeFromFavorites={removeFromFavorites}
 									/>
 								))
