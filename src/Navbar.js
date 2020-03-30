@@ -54,11 +54,11 @@ const Navbar = ({ history }) => {
               <li>
                 <Link to="/recipes">Recipes</Link>
               </li>
-              <li>
-                <Link to="/profile">Profile</Link>
+							 <li>
+                <Link to="/favoriterecipes">Favorite Recipes</Link>
               </li>
               <li>
-                <Link to="/favoriterecipes">Favorite Recipes</Link>
+                <Link to="/profile">Profile</Link>
               </li>
               {/* // <li>
 						// 	<a className="btn-floating" onClick={() => console.log('STAY BLESSED')}>

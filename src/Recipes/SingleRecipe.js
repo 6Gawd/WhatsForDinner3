@@ -121,16 +121,16 @@ const SingleRecipe = ({ recipe, idx }) => {
           <div className="card-content left-align">
             <h6 className="center-align">{title}</h6>
             <ul>
-              <li>
-                <i className="tiny material-icons">check_box</i>
+              <li className='card-text'>
+                <i className="tiny material-icons card-text">check_box</i>
                 Used Ingredients: {usedIngredients.join(', ')}
               </li>
-              <li>
-                <i className="tiny material-icons">remove_shopping_cart</i>
+              <li className='card-text'>
+                <i className="tiny material-icons card-text">remove_shopping_cart</i>
                 Missed Ingredients: {missedIngredients.join(', ')}
               </li>
-              <li>
-                <i className="tiny material-icons">shopping_cart</i>
+              <li className='card-text'>
+                <i className="tiny material-icons card-text">shopping_cart</i>
                 Unused Ingredients: {unusedIngredients.join(', ')}
               </li>
             </ul>

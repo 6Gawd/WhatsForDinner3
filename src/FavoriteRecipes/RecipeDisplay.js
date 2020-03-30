@@ -20,10 +20,10 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
   return (
     <div>
       <div className="col s12 m6 l4">
-        <div className="card">
+        <div className="card medium">
           <div className="card-image">
             <img src={image} alt={title} />
-            <span className="card-title card-title-black">{title}</span>
+            {/* <span className="card-title card-title-black">{title}</span> */}
             <a className="btn-floating halfway-fab waves-effect waves-light blue left">
                 {idx + 1}
               </a>
@@ -36,6 +36,9 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
               </i>
             </a>
           </div>
+          <div class="card-content">
+          <h6>{title}</h6>
+        </div>
           <div className="card-action">
             <Link to={`favoriterecipes/instructions/${id}`}>Let's Start Cooking</Link>
           </div>
