@@ -3,20 +3,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const initTrevorToast = () => {
   toast.info(
-    'Test out these commands: To activate our assistant say, "Hey Trevor!"',
-    {
-      position: 'bottom-left',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    }
-  );
-};
-
-export const instructionsToast = () => {
-  toast.info(
     'For assistance, you can say "Show Instructions" on every page',
     {
       position: 'bottom-left',

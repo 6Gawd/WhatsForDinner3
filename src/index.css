@@ -48,3 +48,12 @@ input {
 .card-padding {
   padding-top: 50px;
 }
+
+.card-text {
+  font-size: .85em;
+}
+
+.card.medium .card-image {
+  max-height: 60%;
+  overflow: inherit;
+}

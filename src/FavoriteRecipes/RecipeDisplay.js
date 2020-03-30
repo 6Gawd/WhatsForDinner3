@@ -4,26 +4,29 @@ import annyang from 'annyang';
 
 const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
   const { id, title, image } = recipe;
-  const startCookingCommands = {
+  const favoritesCommands = {
     ['start cooking recipe ' + (idx + 1)]: () => {
       history.push(`/favoriterecipes/instructions/${id}`)
+    },
+    ['delete recipe ' + (idx + 1)]: () => {
+      removeFromFavorites(id)
     }
   }
 
   useEffect(() => {
-    annyang.addCommands(startCookingCommands);
+    annyang.addCommands(favoritesCommands);
     return () => {
-      annyang.removeCommands(['start cooking recipe ' + (idx + 1)]);
+      annyang.removeCommands(Object.keys(favoritesCommands));
     };
   }, []);
 
   return (
     <div>
       <div className="col s12 m6 l4">
-        <div className="card">
+        <div className="card medium">
           <div className="card-image">
             <img src={image} alt={title} />
-            <span className="card-title card-title-black">{title}</span>
+            {/* <span className="card-title card-title-black">{title}</span> */}
             <a className="btn-floating halfway-fab waves-effect waves-light blue left">
                 {idx + 1}
               </a>
@@ -36,6 +39,11 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
               </i>
             </a>
           </div>
+          <div className="card-content card-text">
+            <div className="container">
+          <h6>{title}</h6>
+          </div>
+                 </div>
           <div className="card-action">
             <Link to={`favoriterecipes/instructions/${id}`}>Let's Start Cooking</Link>
           </div>

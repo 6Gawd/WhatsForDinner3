@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 import annyang from 'annyang';
-import trevor, {speechSynth} from '../Speech/OutputSpeech'
+import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
 const SingleRecipe = ({ recipe, idx }) => {
   const {
@@ -40,38 +40,41 @@ const SingleRecipe = ({ recipe, idx }) => {
     '/analyzedInstructions?apiKey=ea67a4bdaf834f4b86818a43a58433eb';
 
   const addRecipeToFavorite = async () => {
-
-			const recipes = [];
-			await db.collection('favoriteRecipes').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
-				querySnapshot.forEach(function(doc) {
-					const item = doc.data();
-					item.id = doc.id;
-					recipes.push(item.spoonacularId);
-				});
-			});
-			if(recipes.includes(id)){
-        trevor.text = 'You already bookmarked this recipe'
-        speechSynth.speak(trevor)
-      }else{
-    const newFavoriteRecipe = {
-      title,
-      userId: currentUser.uid,
-      image,
-      spoonacularId: id,
-      ingredients: missedIngredients.concat(usedIngredients)
-    };
-    try {
-      const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
-      newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
-      addToFavoritesToast();
-      await db.collection('favoriteRecipes').add(newFavoriteRecipe);
-    trevor.text = `bookmarked recipe ${idx + 1}`
-    speechSynth.speak(trevor)
-    } catch (error) {
-      trevor.text = 'Unfortunetly this recipe does not have instructions'
-      speechSynth.speak(trevor)
+    const recipes = [];
+    await db
+      .collection('favoriteRecipes')
+      .where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          const item = doc.data();
+          item.id = doc.id;
+          recipes.push(item.spoonacularId);
+        });
+      });
+    if (recipes.includes(id)) {
+      trevor.text = 'You already bookmarked this recipe';
+      speechSynth.speak(trevor);
+    } else {
+      const newFavoriteRecipe = {
+        title,
+        userId: currentUser.uid,
+        image,
+        spoonacularId: id,
+        ingredients: missedIngredients.concat(usedIngredients)
+      };
+      try {
+        const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
+        newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
+        addToFavoritesToast();
+        await db.collection('favoriteRecipes').add(newFavoriteRecipe);
+        trevor.text = `bookmarked recipe ${idx + 1}`;
+        speechSynth.speak(trevor);
+      } catch (error) {
+        trevor.text = 'Unfortunetly this recipe does not have instructions';
+        speechSynth.speak(trevor);
+      }
     }
-  }
   };
 
   const getInstructions = async () => {
@@ -121,16 +124,18 @@ const SingleRecipe = ({ recipe, idx }) => {
           <div className="card-content left-align">
             <h6 className="center-align">{title}</h6>
             <ul>
-              <li>
-                <i className="tiny material-icons">check_box</i>
+              <li className="card-text">
+                <i className="tiny material-icons card-text">check_box</i>
                 Used Ingredients: {usedIngredients.join(', ')}
               </li>
-              <li>
-                <i className="tiny material-icons">remove_shopping_cart</i>
+              <li className="card-text">
+                <i className="tiny material-icons card-text">
+                  remove_shopping_cart
+                </i>
                 Missed Ingredients: {missedIngredients.join(', ')}
               </li>
-              <li>
-                <i className="tiny material-icons">shopping_cart</i>
+              <li className="card-text">
+                <i className="tiny material-icons card-text">shopping_cart</i>
                 Unused Ingredients: {unusedIngredients.join(', ')}
               </li>
             </ul>
