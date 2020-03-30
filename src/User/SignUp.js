@@ -26,7 +26,7 @@ const SignUp = ({ history }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container card-padding">
       <div className="card-panel">
         <h1>Sign up</h1>
         <form onSubmit={handleSignUp}>
