@@ -22,13 +22,12 @@ const RecipeInstructions = (props) => {
 
 	useEffect(() => {
 		getFavoriteRecipe(currentUser.uid);
-		annyang.start();
 		annyang.addCommands(returnCommands());
 		trevor.text = "Let's Start Cooking, Are you Ready?";
 		speechSynth.speak(trevor);
 		readyToBeginToast();
 		return () => {
-			annyang.abort();
+			annyang.removeCommands(Object.keys(returnCommands()));
 		};
 	}, []);
 
