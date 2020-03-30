@@ -7,14 +7,12 @@ import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   addIngredientToast,
   deleteIngredientToast,
   clearListToast,
   initTrevorToast,
-  instructionsToast
 } from '../ToastNotifications/Toasts';
 import { listInstructions } from '../Speech/Commands';
 
@@ -52,7 +50,6 @@ const List = () => {
       annyang.addCommands(activatedCommands);
       trevor.text = `at your service`;
       speechSynth.speak(trevor);
-      instructionsToast();
     },
     //Removes all the activated commands
     'trevor stop': () => annyang.removeCommands(Object.keys(activatedCommands)),

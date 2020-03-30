@@ -1,8 +1,4 @@
 import annyang from 'annyang';
-import trevor, { speechSynth } from './OutputSpeech';
-
-//  const [open, setOpen] = useState(false);
-//   const [modalInstructions, setModalInstructions] = useState({ steps: [] });
 
 export const listInstructions = [
   'In order to activate Trevor on our app, you begin by saying "hey Trevor"',

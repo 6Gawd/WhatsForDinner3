@@ -4,16 +4,19 @@ import annyang from 'annyang';
 
 const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
   const { id, title, image } = recipe;
-  const startCookingCommands = {
+  const favoritesCommands = {
     ['start cooking recipe ' + (idx + 1)]: () => {
       history.push(`/favoriterecipes/instructions/${id}`)
+    },
+    ['delete recipe ' + (idx + 1)]: () => {
+      removeFromFavorites(id)
     }
   }
 
   useEffect(() => {
-    annyang.addCommands(startCookingCommands);
+    annyang.addCommands(favoritesCommands);
     return () => {
-      annyang.removeCommands(['start cooking recipe ' + (idx + 1)]);
+      annyang.removeCommands(Object.keys(favoritesCommands));
     };
   }, []);
 
@@ -36,9 +39,11 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
               </i>
             </a>
           </div>
-          <div class="card-content">
+          <div className="card-content card-text">
+            <div className="container">
           <h6>{title}</h6>
-        </div>
+          </div>
+                 </div>
           <div className="card-action">
             <Link to={`favoriterecipes/instructions/${id}`}>Let's Start Cooking</Link>
           </div>

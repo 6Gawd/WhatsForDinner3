@@ -1,9 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { AuthContext } from './Auth';
+import {auth} from './base'
 import Modal from 'react-responsive-modal';
 import annyang from 'annyang';
 import M from  'materialize-css/dist/js/materialize.min.js';
+import trevor, {speechSynth}from './Speech/OutputSpeech'
 
 
 const Navbar = ({ history }) => {
@@ -15,7 +17,11 @@ const Navbar = ({ history }) => {
 		let sidenav = document.querySelector('#slide-out');
     M.Sidenav.init(sidenav);
     annyang.start();
-    annyang.addCommands(navbarVoiceCommands);
+		annyang.addCommands(navbarVoiceCommands);
+		return () => {
+			annyang.removeCommands(Object.keys(navbarVoiceCommands));
+			annyang.removeCommands("Yes sign out")
+		}
 	}, []);
 
 	//   useEffect(() => {
@@ -35,8 +41,20 @@ const Navbar = ({ history }) => {
     },
     'get recipes': () => {
       history.push('/recipes');
-    }
-  };
+		},
+		'sign out': () =>{
+			annyang.addCommands(reallySignOut)
+			trevor.text="ARE YOU SURE ABOUT THAT?"
+			speechSynth.speak(trevor)
+		}
+	};
+	const reallySignOut = {
+		'Yes sign out': ()=>{
+			trevor.text="Okay, Bye"
+			speechSynth.speak(trevor)
+			auth.signOut()
+		}
+	}
 
   return (
     <div>
@@ -58,7 +76,7 @@ const Navbar = ({ history }) => {
                 <Link to="/favoriterecipes">Favorite Recipes</Link>
               </li>
               <li>
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile">Sign Out</Link>
               </li>
               {/* // <li>
 						// 	<a className="btn-floating" onClick={() => console.log('STAY BLESSED')}>

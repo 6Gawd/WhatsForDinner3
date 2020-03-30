@@ -16,8 +16,12 @@ const FavoriteRecipes = ({ history }) => {
 
   useEffect(() => {
     annyang.addCommands(instructionsCommands);
-    if (currentUser) getRecipes(currentUser.uid);
-  }, [currentUser]);
+    getRecipes();
+
+		return () => {
+			annyang.removeCommands(Object.keys(instructionsCommands))
+		}
+  }, []);
 
   const instructionsCommands = {
     'show instructions': () => {
@@ -28,12 +32,12 @@ const FavoriteRecipes = ({ history }) => {
     }
   };
 
-  const getRecipes = async userId => {
+  const getRecipes = async () => {
     try {
       const recipes = [];
       await db
         .collection('favoriteRecipes')
-        .where('userId', '==', userId)
+        .where('userId', '==', currentUser.uid)
         .get()
         .then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
@@ -50,21 +54,20 @@ const FavoriteRecipes = ({ history }) => {
 
   const removeFromFavorites = async recipeId => {
     try {
-      const toastHTML = `
-      <div>
-        <p>Recipe removed from favorites</p>
-      </div>`;
       await db
         .collection('favoriteRecipes')
         .doc(recipeId)
         .delete();
-      const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
-      setRecipes(updatedRecipes);
+      // const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+			// setRecipes(updatedRecipes);
+			await getRecipes()
       removeFromFavoritesToast();
     } catch (error) {
       console.error('Error deleting recipe', error);
     }
   };
+
+	console.log("FavRecipes", recipes)
 
   return (
     <div className="col s12 l12">
