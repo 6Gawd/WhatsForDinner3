@@ -190,8 +190,8 @@ const List = () => {
 	};
 
 	return (
-		<div>
-			<div className="container col s12 m10 offset-m1 center">
+		<div className="card-padding">
+			<div className="container">
 				<div className="card-panel">
 					<h1 className="center-align">Your Shopping List</h1>
 					<ListOfIngredients ingredients={ingredients} deleteIngredient={deleteIngredient} />

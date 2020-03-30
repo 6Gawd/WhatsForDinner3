@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
@@ -22,7 +22,6 @@ import 'react-toastify/dist/ReactToastify.css';
 toast.configure();
 
 const App = () => {
-
   return (
     <AuthProvider>
       <Router>

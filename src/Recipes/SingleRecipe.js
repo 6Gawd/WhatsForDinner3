@@ -22,8 +22,6 @@ const SingleRecipe = ({ recipe, idx }) => {
   const addToFavoriteCommands = {
     ['bookmark recipe number ' + (idx + 1)]: () => {
       addRecipeToFavorite();
-      trevor.text = `bookmarked recipe ${idx + 1}`
-      speechSynth.speak(trevor)
     }
   };
 
@@ -42,22 +40,38 @@ const SingleRecipe = ({ recipe, idx }) => {
     '/analyzedInstructions?apiKey=ea67a4bdaf834f4b86818a43a58433eb';
 
   const addRecipeToFavorite = async () => {
+
+			const recipes = [];
+			await db.collection('favoriteRecipes').where('userId', '==', currentUser.uid).get().then(function(querySnapshot) {
+				querySnapshot.forEach(function(doc) {
+					const item = doc.data();
+					item.id = doc.id;
+					recipes.push(item.spoonacularId);
+				});
+			});
+			if(recipes.includes(id)){
+        trevor.text = 'You already bookmarked this recipe'
+        speechSynth.speak(trevor)
+      }else{
     const newFavoriteRecipe = {
       title,
       userId: currentUser.uid,
       image,
-      spoonacularId: id
+      spoonacularId: id,
+      ingredients: missedIngredients.concat(usedIngredients)
     };
     try {
       const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
       newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
       addToFavoritesToast();
+      await db.collection('favoriteRecipes').add(newFavoriteRecipe);
+    trevor.text = `bookmarked recipe ${idx + 1}`
+    speechSynth.speak(trevor)
     } catch (error) {
-      console.log('No Recipe', error);
+      trevor.text = 'Unfortunetly this recipe does not have instructions'
+      speechSynth.speak(trevor)
     }
-    newFavoriteRecipe.ingredients = missedIngredients.concat(usedIngredients);
-
-    await db.collection('favoriteRecipes').add(newFavoriteRecipe);
+  }
   };
 
   const getInstructions = async () => {

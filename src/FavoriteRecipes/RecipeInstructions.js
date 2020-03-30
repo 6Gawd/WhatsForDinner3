@@ -40,16 +40,28 @@ const RecipeInstructions = (props) => {
 				nextStepsToast();
 				previousStepsToast();
 			},
-			'Go to next step': () => {
-				steps++;
-				rec(steps);
+			'Go to next step': async () => {
+				let bool = await rec(steps + 1);
+				if (bool) {
+					steps++;
+				}
+				else {
+					trevor.text = "You are already on the last step";
+					speechSynth.speak(trevor);
+				}
 			},
 			'repeat current step': () => {
 				rec(steps);
 			},
-			'go to previous step': () => {
-				steps--;
-				rec(steps);
+			'go to previous step': async () => {
+				let bool = await rec(steps - 1);
+				if (bool){
+					steps--;
+				}
+				else {
+					trevor.text = "You are already on the first step";
+					speechSynth.speak(trevor);
+				}
 			}
 		};
 	};
@@ -58,9 +70,14 @@ const RecipeInstructions = (props) => {
 		const recipe = await db.collection('favoriteRecipes').doc(id).get().then(function(doc) {
 			return doc.data();
 		});
-		setCurrentStep(step);
-		trevor.text = `Step ${step + 1}. ${recipe.steps[step]}`;
-		speechSynth.speak(trevor);
+		if (step < recipe.steps.length && step >= 0) {
+			setCurrentStep(step);
+			trevor.text = `Step ${step + 1}. ${recipe.steps[step]}`;
+			speechSynth.speak(trevor);
+			return true;
+		} else {
+			return false;
+		}
 	};
 
 	const getFavoriteRecipe = async (userId) => {
@@ -75,20 +92,24 @@ const RecipeInstructions = (props) => {
 	};
 
 	return (
-		<div>
+		<div className="card-padding">
 			<div className="container container-padding">
 				<div className="col 12 m7">
 					<div className="card horizontal">
 						<img src={selectedRecipe.image} alt={selectedRecipe.title} />
-						<h4 className="right-align">{selectedRecipe.title}</h4>
-						<p className="valign-wrapper left-align">Current Step: {selectedRecipe.steps[currentStep]}</p>
+						<div>
+							<h4 className="left-align instructions-text">{selectedRecipe.title}</h4>
+							<p className="valign-wrapper left-align instructions-text">
+								Current Step: {selectedRecipe.steps[currentStep]}
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
 			{/* INGREDIENTS */}
 			<div className="container container-padding">
 				<div className="col 12 m7">
-					<div className="card horizontal">
+					<div className="card horizontal instructions-text">
 						<h6 className="left-align">Ingredients: {selectedRecipe.ingredients.join(', ')}</h6>
 					</div>
 				</div>
@@ -102,7 +123,7 @@ const RecipeInstructions = (props) => {
 							{/* <li className="collection-header"></li> */}
 							{selectedRecipe.steps.length ? (
 								selectedRecipe.steps.map((step, i) => (
-									<li key={step} className="left-align">
+									<li key={step} className="left-align instructions-text">
 										<strong>{`Step ${i + 1}:`}</strong> {`${step}`}
 									</li>
 								))

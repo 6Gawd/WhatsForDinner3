@@ -26,7 +26,7 @@ const Login = ({ history }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container card-padding">
       <div className="card-panel">
         <h1>Login</h1>
         <form onSubmit={handleLogin}>
