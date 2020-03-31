@@ -8,6 +8,7 @@ import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 import { favRecipeInstructions } from '../Speech/Commands';
 import Modal from 'react-responsive-modal';
 import annyang from 'annyang';
+import trevor, { speechSynth} from '../Speech/OutputSpeech'
 
 const FavoriteRecipes = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
@@ -58,16 +59,16 @@ const FavoriteRecipes = ({ history }) => {
         .collection('favoriteRecipes')
         .doc(recipeId)
         .delete();
-      // const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
-			// setRecipes(updatedRecipes);
-			await getRecipes()
+      const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+			setRecipes(updatedRecipes);
+			// await getRecipes()
+      trevor.text = `removed from favorites`
+      speechSynth.speak(trevor)
       removeFromFavoritesToast();
     } catch (error) {
       console.error('Error deleting recipe', error);
     }
   };
-
-	console.log("FavRecipes", recipes)
 
   return (
     <div className="col s12 l12">

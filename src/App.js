@@ -6,7 +6,7 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom';
-import Profile from './User/Profile';
+import Signout from './User/Signout';
 import Login from './User/Login';
 import SignUp from './User/SignUp';
 import Recipes from './Recipes/Recipes';
@@ -28,7 +28,7 @@ const App = () => {
         <div className="App">
           <NavBar />
           <Switch>
-            <PrivateRoute exact path="/" component={Profile} />
+            <PrivateRoute exact path="/signout" component={Signout} />
             <PrivateRoute exact path="/list" component={List} />
             <PrivateRoute exact path="/recipes" component={Recipes} />
             <PrivateRoute
@@ -43,7 +43,7 @@ const App = () => {
             />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
-            <Route render={() => <Redirect to="/" />} />
+            <Route render={() => <Redirect to="/list" />} />
           </Switch>
         </div>
       </Router>
