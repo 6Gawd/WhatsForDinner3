@@ -6,7 +6,6 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom';
-import Profile from './User/Profile';
 import Login from './User/Login';
 import SignUp from './User/SignUp';
 import Recipes from './Recipes/Recipes';
@@ -28,8 +27,7 @@ const App = () => {
         <div className="App">
           <NavBar />
           <Switch>
-            <PrivateRoute exact path="/" component={Profile} />
-            <PrivateRoute exact path="/list" component={List} />
+            <PrivateRoute exact path="/" component={List} />
             <PrivateRoute exact path="/recipes" component={Recipes} />
             <PrivateRoute
               exact

@@ -12,7 +12,7 @@ import {
   addIngredientToast,
   deleteIngredientToast,
   clearListToast,
-  initTrevorToast,
+  initTrevorToast
 } from '../ToastNotifications/Toasts';
 import { listInstructions } from '../Speech/Commands';
 
@@ -27,11 +27,11 @@ const List = () => {
   useEffect(() => {
     getIngredients();
     initTrevorToast();
-    annyang.addCommands(initCommands);
-    return () => {
-      annyang.removeCommands(Object.keys(activatedCommands));
-      annyang.removeCommands(Object.keys(initCommands));
-    };
+    // annyang.addCommands(initCommands);
+    // return () => {
+    //   annyang.removeCommands(Object.keys(activatedCommands));
+    //   annyang.removeCommands(Object.keys(initCommands));
+    // };
   }, []);
 
   const activatedCommands = {
