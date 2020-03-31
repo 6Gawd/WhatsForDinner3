@@ -5,13 +5,13 @@ import annyang from 'annyang';
 const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
   const { id, title, image } = recipe;
   const favoritesCommands = {
-    ['start cooking recipe ' + (idx + 1)]: () => {
-      history.push(`/favoriterecipes/instructions/${id}`)
+    ['start cooking recipe ' + idx]: () => {
+      history.push(`/favoriterecipes/instructions/${id}`);
     },
-    ['delete recipe ' + (idx + 1)]: () => {
-      removeFromFavorites(id)
+    ['delete recipe ' + idx]: () => {
+      removeFromFavorites(id);
     }
-  }
+  };
 
   useEffect(() => {
     annyang.addCommands(favoritesCommands);
@@ -26,10 +26,9 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
         <div className="card medium">
           <div className="card-image">
             <img src={image} alt={title} />
-            {/* <span className="card-title card-title-black">{title}</span> */}
             <a className="btn-floating halfway-fab waves-effect waves-light blue left">
-                {idx + 1}
-              </a>
+              {idx}
+            </a>
             <a className="btn-floating halfway-fab waves-effect waves-light red">
               <i
                 className="material-icons"
@@ -41,11 +40,13 @@ const RecipeDisplay = ({ history, recipe, removeFromFavorites, idx }) => {
           </div>
           <div className="card-content card-text">
             <div className="container">
-          <h6>{title}</h6>
+              <h6>{title}</h6>
+            </div>
           </div>
-                 </div>
           <div className="card-action">
-            <Link to={`favoriterecipes/instructions/${id}`}>Let's Start Cooking</Link>
+            <Link to={`favoriterecipes/instructions/${id}`}>
+              Let's Start Cooking
+            </Link>
           </div>
         </div>
       </div>

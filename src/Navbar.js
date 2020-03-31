@@ -7,12 +7,10 @@ import annyang from 'annyang';
 import M from  'materialize-css/dist/js/materialize.min.js';
 import trevor, {speechSynth}from './Speech/OutputSpeech'
 
-
 const Navbar = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
 
-  // console.log('navbar', props);
   useEffect(() => {
 		let sidenav = document.querySelector('#slide-out');
     M.Sidenav.init(sidenav);

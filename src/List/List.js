@@ -2,11 +2,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../Auth.js';
 import { db } from '../base';
-
 import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
-
 import 'react-toastify/dist/ReactToastify.css';
 import {
   addIngredientToast,
@@ -15,8 +13,7 @@ import {
   initTrevorToast
 } from '../ToastNotifications/Toasts';
 import { listInstructions } from '../Speech/Commands';
-
-import Modal from 'react-responsive-modal';
+import InstructionModal from '../Modal/InstructionModal';
 
 const List = () => {
   const { currentUser } = useContext(AuthContext);
@@ -42,15 +39,15 @@ const List = () => {
 
   const initCommands = {
     //Adds all the activated commands
-    'hey Trevor': () => {
+    'hey Alex': () => {
       annyang.addCommands(activatedCommands);
       trevor.text = `at your service`;
       speechSynth.speak(trevor);
     },
     //Removes all the activated commands
-    'trevor stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
-    'show instructions': () => setOpen(true),
-    'close instructions': () => setOpen(false)
+    'Alex stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
+    help: () => setOpen(true),
+    close: () => setOpen(false)
   };
 
   const getIngredients = async () => {
@@ -223,24 +220,13 @@ const List = () => {
             Clear List
             <i className="tiny material-icons right">delete_sweep</i>
           </button>
-          <Modal open={open} onClose={() => setOpen(false)}>
-            <h4>Trevor's Commands</h4>
-            <ul>
-              {listInstructions.map((instruction, i) => (
-                <li key={i}>{instruction}</li>
-              ))}
-            </ul>
-          </Modal>
         </div>
       </div>
-      <div className="fixed-action-btn">
-        <a
-          className="btn-floating btn-medium amber"
-          onClick={() => setOpen(true)}
-        >
-          <i className="large material-icons">help_outline</i>
-        </a>
-      </div>
+      <InstructionModal
+        open={open}
+        setOpen={setOpen}
+        instructions={listInstructions}
+      />
     </div>
   );
 };

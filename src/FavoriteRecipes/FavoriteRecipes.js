@@ -2,11 +2,10 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../Auth';
 import { db } from '../base';
 import RecipeDisplay from './RecipeDisplay';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 import { favRecipeInstructions } from '../Speech/Commands';
-import Modal from 'react-responsive-modal';
+import InstructionModal from '../Modal/InstructionModal'
 import annyang from 'annyang';
 import trevor, { speechSynth} from '../Speech/OutputSpeech'
 
@@ -17,7 +16,7 @@ const FavoriteRecipes = ({ history }) => {
 
   useEffect(() => {
     annyang.addCommands(instructionsCommands);
-    getRecipes();
+    getFavoriteRecipes();
 
 		return () => {
 			annyang.removeCommands(Object.keys(instructionsCommands))
@@ -25,15 +24,11 @@ const FavoriteRecipes = ({ history }) => {
   }, []);
 
   const instructionsCommands = {
-    'show instructions': () => {
-      setOpen(true);
-    },
-    'close instructions': () => {
-      setOpen(false);
-    }
+    'help': () => setOpen(true),
+    'close': () => setOpen(false)
   };
 
-  const getRecipes = async () => {
+  const getFavoriteRecipes = async () => {
     try {
       const recipes = [];
       await db
@@ -59,9 +54,9 @@ const FavoriteRecipes = ({ history }) => {
         .collection('favoriteRecipes')
         .doc(recipeId)
         .delete();
-      const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
-			setRecipes(updatedRecipes);
-			// await getRecipes()
+      // const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+			// setRecipes(updatedRecipes);
+			await getFavoriteRecipes()
       trevor.text = `removed from favorites`
       speechSynth.speak(trevor)
       removeFromFavoritesToast();
@@ -81,7 +76,7 @@ const FavoriteRecipes = ({ history }) => {
                 recipes.map((recipe, idx) => (
                   <RecipeDisplay
                     key={recipe.id}
-                    idx={idx}
+                    idx={idx+1}
                     recipe={recipe}
                     history={history}
                     removeFromFavorites={removeFromFavorites}
@@ -94,22 +89,11 @@ const FavoriteRecipes = ({ history }) => {
           </div>
         </div>
       </div>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <h4>Trevor's Commands</h4>
-        <ul>
-          {favRecipeInstructions.map((instruction, i) => (
-            <li key={i}>{instruction}</li>
-          ))}
-        </ul>
-      </Modal>
-      <div className="fixed-action-btn">
-        <a
-          className="btn-floating btn-medium amber"
-          onClick={() => setOpen(true)}
-        >
-          <i className="large material-icons">help_outline</i>
-        </a>
-      </div>
+      <InstructionModal
+        open={open}
+        setOpen={setOpen}
+        instructions={favRecipeInstructions}
+      />
     </div>
   );
 };
