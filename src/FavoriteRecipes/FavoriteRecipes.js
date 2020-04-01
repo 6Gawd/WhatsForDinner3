@@ -74,9 +74,6 @@ const FavoriteRecipes = ({ history }) => {
     }
   };
 
-  // if (loading) {
-  //   return <Spinner />;
-  // }
   return (
     <div>
       {loading ? (
@@ -103,6 +100,7 @@ const FavoriteRecipes = ({ history }) => {
                   )}
                 </div>
               </div>
+
             </div>
           </div>
           <InstructionModal

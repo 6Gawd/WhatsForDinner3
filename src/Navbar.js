@@ -47,6 +47,7 @@ const Navbar = ({ history }) => {
     }
   };
 
+
   return (
     <div>
       <nav className="nav-wrapper indigo navbar-padding">
@@ -100,7 +101,6 @@ const Navbar = ({ history }) => {
           </ul>
         </div>
       </nav>
-
       {currentUser ? (
         <ul id="slide-out" className="sidenav">
           <li>
