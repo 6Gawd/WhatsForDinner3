@@ -15,13 +15,14 @@ import {
 import { listInstructions } from '../Speech/Commands';
 import InstructionModal from '../Modal/InstructionModal';
 
-const List = () => {
+const List = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState('');
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    initSpeech();
     getIngredients();
     initTrevorToast();
     annyang.addCommands(initCommands);
@@ -133,7 +134,7 @@ const List = () => {
         });
       await deleteIngredient(ingredient);
     } catch (error) {
-      trevor.text = `couldnt find ${tag}`;
+      trevor.text = `could not find ${tag}`;
       speechSynth.speak(trevor);
     }
   };
@@ -175,8 +176,13 @@ const List = () => {
     });
   };
 
+  const initSpeech = () => {
+    document.getElementById('init-speech').click();
+  };
+
   return (
     <div className="card-padding">
+      <button id="init-speech"></button>
       <div className="container">
         <div className="card-panel">
           <h1 className="center-align">Your Shopping List</h1>
@@ -211,15 +217,29 @@ const List = () => {
               </div>
             </div>
           </form>
-          <button
-            className="btn waves-effect waves-light red center"
-            type="submit"
-            name="action"
-            onClick={() => clearListWithVoice()}
-          >
-            Clear List
-            <i className="tiny material-icons right">delete_sweep</i>
-          </button>
+          <div className="container">
+            <button
+              className="btn waves-effect waves-light green center"
+              type="submit"
+              name="action"
+              onClick={() => history.push('/recipes')}
+            >
+              Get Recipes
+              <i className="tiny material-icons right">shopping_cart</i>
+            </button>
+          </div>
+          <br />
+          <div className="container">
+            <button
+              className="btn waves-effect waves-light red center"
+              type="submit"
+              name="action"
+              onClick={() => clearListWithVoice()}
+            >
+              Clear List
+              <i className="tiny material-icons right">delete_sweep</i>
+            </button>
+          </div>
         </div>
       </div>
       <InstructionModal

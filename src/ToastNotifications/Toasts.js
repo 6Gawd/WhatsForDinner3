@@ -3,10 +3,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const initTrevorToast = () => {
   toast.info(
-    'For assistance, you can say "help" at any time!',
+    'For assistance, you can say "help" at any time. Or click the help button.',
     {
       position: 'bottom-left',
-      autoClose: 6000,
+      autoClose: 8000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

@@ -1,35 +1,40 @@
 import annyang from 'annyang';
 
 export const listInstructions = [
-  'In order to activate Alex on our app, you begin by saying "hey Alex"',
-  'You can add any food item you like to your list. Say "add Cheese"',
-  'You can also delete any food item off of your list. Say "delete Cheese"',
-  'If you want to clear your current shopping list, say "clear my list"',
-  'If you want to get some recipes using your current shopping list, say "get recipes"',
-  'If you want to go to your favorite recipes, say "get favorite recipes"',
-  'Say "close" to close this window'
+  'Activate Alex by saying “hey Alex”',
+  'Say “add Cheese” to add to your list',
+  'You can also say “delete Cheese” or “clear my list”',
+  'Say “get recipes” to get some new recipes!',
+  'Say “get favorite recipes” to go to your recipes',
+  'Say “close” to close this window'
 ];
 
 export const recipesInstructions = [
-  'To add a new recipe to your favorites, say "bookmark recipe number (corresponding recipe number)"',
-  'To show steps for a recipe, say "steps for recipe number (corresponding recipe number)"',
-  'To close steps for a recipe, say "close number (corresponding recipe number)"'
+  'You can say “bookmark recipe number (corresponding recipe number)“',
+  'Or “steps for recipe number (corresponding recipe number)“',
+  'You can also “close number (corresponding recipe number)“'
 ]
 
 export const favRecipeInstructions = [
-  'To see recipe instructions, say "Start cooking recipe (corresponding recipe number)"',
-  'To delete a recipe, say "delete recipe (corresponding recipe number)"'
+  'Begin by saying “Start cooking recipe (corresponding recipe number)“',
+  'You can also “delete recipe (corresponding recipe number)“'
 ]
 
 export const singleFavRecipeInstructions = [
-  'Say "Yes I am" to get started',
-  'Say "Go to next step" to hear the next step',
-  'Say "Go to previous step" to hear the previous step',
-  'Say "Repeat step" to hear the step over again'
+  'Say “Yes I am” to get started',
+  'You can also say “next step”',
+  'And “previous step”',
+  'Also, “Repeat step”'
 ]
 
 export const profileInstructions = [
-  'Say "sign out" to sign out :('
+  'Say “sign out” to sign out :('
+]
+
+export const navInstructions = [
+  'Say "Get List" to view shopping list.',
+  'Say "Get Recipes" to view recipes.',
+  'Say "Get Favorite Recipes" to view favorite recipes.',
 ]
 
 export default annyang;

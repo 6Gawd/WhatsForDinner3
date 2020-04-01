@@ -36,7 +36,7 @@ const RecipeInstructions = props => {
       'Yes I am': () => {
         readCurrentStep(steps);
       },
-      'Go to next step': async () => {
+      'next step': async () => {
         let bool = await readCurrentStep(steps + 1);
         if (bool) {
           steps++;
@@ -45,10 +45,10 @@ const RecipeInstructions = props => {
           speechSynth.speak(trevor);
         }
       },
-      'repeat current step': () => {
+      'repeat step': () => {
         readCurrentStep(steps);
       },
-      'go to previous step': async () => {
+      'previous step': async () => {
         let bool = await readCurrentStep(steps - 1);
         if (bool) {
           steps--;
@@ -57,10 +57,10 @@ const RecipeInstructions = props => {
           speechSynth.speak(trevor);
         }
       },
-      'show instructions': () => {
+      'help': () => {
         setOpen(true);
       },
-      'close instructions': () => {
+      'close': () => {
         setOpen(false);
       }
     };
