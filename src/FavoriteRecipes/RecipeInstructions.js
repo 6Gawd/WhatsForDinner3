@@ -1,16 +1,12 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../Auth.js';
+import React, { useState, useEffect } from 'react';
 import { db } from '../base';
 import annyang from 'annyang';
-import trevor, { speechSynth } from '../Speech/OutputSpeech';
-import {
-  readyToBeginToast,
-} from '../ToastNotifications/Toasts';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
+import { readyToBeginToast } from '../ToastNotifications/Toasts';
 import { singleFavRecipeInstructions } from '../Speech/Commands';
-import Modal from 'react-responsive-modal';
+import InstructionModal from '../Modal/InstructionModal';
 
 const RecipeInstructions = props => {
-  const { currentUser } = useContext(AuthContext);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedRecipe, setSelectedRecipe] = useState({
     steps: [],
@@ -21,10 +17,10 @@ const RecipeInstructions = props => {
   const id = props.match.params.id;
 
   useEffect(() => {
-    getFavoriteRecipe(currentUser.uid);
+    getFavoriteRecipe();
     annyang.addCommands(returnCommands());
-    trevor.text = "Let's Start Cooking, Are you Ready?";
-    speechSynth.speak(trevor);
+    alex.text = "Let's Start Cooking, Are you Ready?";
+    speechSynth.speak(alex);
     readyToBeginToast();
     return () => {
       annyang.removeCommands(Object.keys(returnCommands()));
@@ -32,42 +28,43 @@ const RecipeInstructions = props => {
   }, []);
 
   const returnCommands = () => {
+    //had to use closure because Annyang only takes commands objects and doesnt have access to the currentStep state
     let steps = 0;
     return {
       'Yes I am': () => {
-        rec(steps);
+        readCurrentStep(steps);
       },
-      'Go to next step': async () => {
-        let bool = await rec(steps + 1);
+      'next step': async () => {
+        let bool = await readCurrentStep(steps + 1);
         if (bool) {
           steps++;
         } else {
-          trevor.text = 'You are already on the last step';
-          speechSynth.speak(trevor);
+          alex.text = 'You are already on the last step';
+          speechSynth.speak(alex);
         }
       },
-      'repeat current step': () => {
-        rec(steps);
+      'repeat step': () => {
+        readCurrentStep(steps);
       },
-      'go to previous step': async () => {
-        let bool = await rec(steps - 1);
+      'previous step': async () => {
+        let bool = await readCurrentStep(steps - 1);
         if (bool) {
           steps--;
         } else {
-          trevor.text = 'You are already on the first step';
-          speechSynth.speak(trevor);
+          alex.text = 'You are already on the first step';
+          speechSynth.speak(alex);
         }
       },
-      'show instructions': () => {
+      help: () => {
         setOpen(true);
       },
-      'close instructions': () => {
+      close: () => {
         setOpen(false);
       }
     };
   };
 
-  const rec = async step => {
+  const readCurrentStep = async step => {
     const recipe = await db
       .collection('favoriteRecipes')
       .doc(id)
@@ -77,15 +74,15 @@ const RecipeInstructions = props => {
       });
     if (step < recipe.steps.length && step >= 0) {
       setCurrentStep(step);
-      trevor.text = `Step ${step + 1}. ${recipe.steps[step]}`;
-      speechSynth.speak(trevor);
+      alex.text = `Step ${step + 1}. ${recipe.steps[step]}`;
+      speechSynth.speak(alex);
       return true;
     } else {
       return false;
     }
   };
 
-  const getFavoriteRecipe = async userId => {
+  const getFavoriteRecipe = async () => {
     try {
       const recipe = await db
         .collection('favoriteRecipes')
@@ -127,13 +124,11 @@ const RecipeInstructions = props => {
           </div>
         </div>
       </div>
-
       {/* INSTRUCTIONS */}
       <div className="container container-padding">
         <div className="col 12 m7">
           <div className="card horizontal">
             <ul>
-              {/* <li className="collection-header"></li> */}
               {selectedRecipe.steps.length ? (
                 selectedRecipe.steps.map((step, i) => (
                   <li key={step} className="left-align instructions-text">
@@ -147,22 +142,11 @@ const RecipeInstructions = props => {
           </div>
         </div>
       </div>
-			      <Modal open={open} onClose={() => setOpen(false)}>
-        <h4>Trevor's Commands</h4>
-        <ul>
-          {singleFavRecipeInstructions.map((instruction, i) => (
-            <li key={i}>{instruction}</li>
-          ))}
-        </ul>
-      </Modal>
-      <div className="fixed-action-btn">
-        <a
-          className="btn-floating btn-medium amber"
-          onClick={() => setOpen(true)}
-        >
-          <i className="large material-icons">help_outline</i>
-        </a>
-      </div>
+      <InstructionModal
+        open={open}
+        setOpen={setOpen}
+        instructions={singleFavRecipeInstructions}
+      />
     </div>
   );
 };

@@ -2,37 +2,35 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../Auth';
 import { db } from '../base';
 import RecipeDisplay from './RecipeDisplay';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 import { favRecipeInstructions } from '../Speech/Commands';
-import Modal from 'react-responsive-modal';
+import InstructionModal from '../Modal/InstructionModal';
 import annyang from 'annyang';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
+import Spinner from '../Modal/Spinner';
 
 const FavoriteRecipes = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [recipes, setRecipes] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     annyang.addCommands(instructionsCommands);
-    getRecipes();
+    getFavoriteRecipes();
 
-		return () => {
-			annyang.removeCommands(Object.keys(instructionsCommands))
-		}
+    return () => {
+      annyang.removeCommands(Object.keys(instructionsCommands));
+    };
   }, []);
 
   const instructionsCommands = {
-    'show instructions': () => {
-      setOpen(true);
-    },
-    'close instructions': () => {
-      setOpen(false);
-    }
+    help: () => setOpen(true),
+    close: () => setOpen(false)
   };
 
-  const getRecipes = async () => {
+  const getFavoriteRecipes = async () => {
     try {
       const recipes = [];
       await db
@@ -46,7 +44,15 @@ const FavoriteRecipes = ({ history }) => {
             recipes.push(item);
           });
         });
-      setRecipes(recipes);
+      if (recipes.length > 0) {
+        alex.text = `Loading your favorite recipes`;
+        speechSynth.speak(alex);
+        setRecipes(recipes);
+        setLoading(false);
+      } else {
+        alex.text = `please bookmark some recipes first`;
+        speechSynth.speak(alex);
+      }
     } catch (error) {
       console.error('No Recipes', error);
     }
@@ -58,57 +64,54 @@ const FavoriteRecipes = ({ history }) => {
         .collection('favoriteRecipes')
         .doc(recipeId)
         .delete();
-      // const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
-			// setRecipes(updatedRecipes);
-			await getRecipes()
+      const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
+      setRecipes(updatedRecipes);
+      alex.text = `removed from favorites`;
+      speechSynth.speak(alex);
       removeFromFavoritesToast();
     } catch (error) {
       console.error('Error deleting recipe', error);
     }
   };
 
-	console.log("FavRecipes", recipes)
-
+  // if (loading) {
+  //   return <Spinner />;
+  // }
   return (
-    <div className="col s12 l12">
-      <div>
-        <h1 className="center-align">Your Favorite Recipes</h1>
-        <div className="container">
-          <div className="card-panel">
-            <div className="row">
-              {recipes.length ? (
-                recipes.map((recipe, idx) => (
-                  <RecipeDisplay
-                    key={recipe.id}
-                    idx={idx}
-                    recipe={recipe}
-                    history={history}
-                    removeFromFavorites={removeFromFavorites}
-                  />
-                ))
-              ) : (
-                <p>No Favorite Recipes yet</p>
-              )}
+    <div>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="col s12 l12">
+          <div>
+            <h1 className="center-align">Your Favorite Recipes</h1>
+            <div className="container">
+              <div className="card-panel">
+                <div className="row">
+                  {recipes.length ? (
+                    recipes.map((recipe, idx) => (
+                      <RecipeDisplay
+                        key={recipe.id}
+                        idx={idx + 1}
+                        recipe={recipe}
+                        history={history}
+                        removeFromFavorites={removeFromFavorites}
+                      />
+                    ))
+                  ) : (
+                    <p>No Favorite Recipes yet</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
+          <InstructionModal
+            open={open}
+            setOpen={setOpen}
+            instructions={favRecipeInstructions}
+          />
         </div>
-      </div>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <h4>Trevor's Commands</h4>
-        <ul>
-          {favRecipeInstructions.map((instruction, i) => (
-            <li key={i}>{instruction}</li>
-          ))}
-        </ul>
-      </Modal>
-      <div className="fixed-action-btn">
-        <a
-          className="btn-floating btn-medium amber"
-          onClick={() => setOpen(true)}
-        >
-          <i className="large material-icons">help_outline</i>
-        </a>
-      </div>
+      )}
     </div>
   );
 };

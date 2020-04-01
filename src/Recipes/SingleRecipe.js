@@ -2,12 +2,11 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import axios from 'axios';
-import Modal from 'react-responsive-modal';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 import annyang from 'annyang';
-import trevor, { speechSynth } from '../Speech/OutputSpeech';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
+import RecipeStepsModal from '../Modal/RecipeStepsModal';
 
 const SingleRecipe = ({ recipe, idx }) => {
   const {
@@ -20,15 +19,19 @@ const SingleRecipe = ({ recipe, idx }) => {
   } = recipe;
 
   const addToFavoriteCommands = {
-    ['bookmark recipe number ' + (idx + 1)]: () => {
+    ['bookmark recipe number ' + idx]: () => {
       addRecipeToFavorite();
-    }
+    },
+    ['steps for recipe number ' + idx]: () => {
+      getInstructions();
+    },
+    ['close number ' + idx]: () => setOpen(false)
   };
 
   useEffect(() => {
     annyang.addCommands(addToFavoriteCommands);
     return () => {
-      annyang.removeCommands(['bookmark recipe number ' + (idx + 1)]);
+      annyang.removeCommands(Object.keys(addToFavoriteCommands));
     };
   }, []);
 
@@ -37,9 +40,10 @@ const SingleRecipe = ({ recipe, idx }) => {
   const [modalInstructions, setModalInstructions] = useState({ steps: [] });
   const recipeURLStart = 'https://api.spoonacular.com/recipes/';
   const recipeURLEnd =
-    '/analyzedInstructions?apiKey=ea67a4bdaf834f4b86818a43a58433eb';
+    '/analyzedInstructions?apiKey=9dbfb748dfa44db2becd40388c22f59c';
 
   const addRecipeToFavorite = async () => {
+    //validation for duplicate recipe bookmarked
     const recipes = [];
     await db
       .collection('favoriteRecipes')
@@ -53,8 +57,8 @@ const SingleRecipe = ({ recipe, idx }) => {
         });
       });
     if (recipes.includes(id)) {
-      trevor.text = 'You already bookmarked this recipe';
-      speechSynth.speak(trevor);
+      alex.text = 'You already bookmarked this recipe';
+      speechSynth.speak(alex);
     } else {
       const newFavoriteRecipe = {
         title,
@@ -63,21 +67,23 @@ const SingleRecipe = ({ recipe, idx }) => {
         spoonacularId: id,
         ingredients: missedIngredients.concat(usedIngredients)
       };
+      //validation for recipes that includes intructions from the api
       try {
         const { data } = await axios.get(recipeURLStart + id + recipeURLEnd);
         newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
         addToFavoritesToast();
         await db.collection('favoriteRecipes').add(newFavoriteRecipe);
-        trevor.text = `bookmarked recipe ${idx + 1}`;
-        speechSynth.speak(trevor);
+        alex.text = `bookmarked recipe ${idx}`;
+        speechSynth.speak(alex);
       } catch (error) {
-        trevor.text = 'Unfortunetly this recipe does not have instructions';
-        speechSynth.speak(trevor);
+        alex.text = 'unfortunately this recipe does not have instructions';
+        speechSynth.speak(alex);
       }
     }
   };
 
   const getInstructions = async () => {
+    //To display instruction in the modal
     try {
       setOpen(true);
       const selectedRecipe = {
@@ -95,12 +101,29 @@ const SingleRecipe = ({ recipe, idx }) => {
   };
 
   const addToFavoriteFromModal = async modalObject => {
-    try {
-      modalObject.ingredients = missedIngredients.concat(usedIngredients);
-      await db.collection('favoriteRecipes').add(modalObject);
-      addToFavoritesToast();
-    } catch (error) {
-      console.error('Error adding to favorite recipes');
+    const recipes = [];
+    await db
+      .collection('favoriteRecipes')
+      .where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          const item = doc.data();
+          item.id = doc.id;
+          recipes.push(item.spoonacularId);
+        });
+      });
+    if (recipes.includes(id)) {
+      alex.text = 'You already bookmarked this recipe';
+      speechSynth.speak(alex);
+    } else {
+      try {
+        modalObject.ingredients = missedIngredients.concat(usedIngredients);
+        await db.collection('favoriteRecipes').add(modalObject);
+        addToFavoritesToast();
+      } catch (error) {
+        console.error('Error adding to favorite recipes');
+      }
     }
   };
 
@@ -112,7 +135,7 @@ const SingleRecipe = ({ recipe, idx }) => {
             <img src={image} alt={title} />
             <span className="card-title">
               <a className="btn-floating halfway-fab waves-effect waves-light blue left">
-                {idx + 1}
+                {idx}
               </a>
             </span>
             <a className="btn-floating halfway-fab waves-effect waves-light red">
@@ -148,28 +171,13 @@ const SingleRecipe = ({ recipe, idx }) => {
             >
               Instructions
             </button>
-            <Modal open={open} onClose={() => setOpen(false)}>
-              <h4>{modalInstructions.title}</h4>
-              <ul>
-                {modalInstructions.steps.length ? (
-                  modalInstructions.steps.map((step, i) => (
-                    <li key={step} className="left-align">
-                      <strong>{`Step ${i + 1}:`}</strong> {`${step}`}
-                    </li>
-                  ))
-                ) : (
-                  <p>Instructions unavailable at this time</p>
-                )}
-              </ul>
-              <a className="btn-floating halfway-fab waves-effect waves-light red">
-                <i
-                  className="material-icons"
-                  onClick={() => addToFavoriteFromModal(modalInstructions)}
-                >
-                  favorite
-                </i>
-              </a>
-            </Modal>
+            <RecipeStepsModal
+              open={open}
+              setOpen={setOpen}
+              modalInstructions={modalInstructions}
+              idx={idx}
+              addToFavoriteFromModal={addToFavoriteFromModal}
+            />
           </div>
         </div>
       </div>

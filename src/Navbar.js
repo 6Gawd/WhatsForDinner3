@@ -1,15 +1,13 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import { AuthContext } from './Auth';
 import { auth } from './base';
-import Modal from 'react-responsive-modal';
 import annyang from 'annyang';
 import M from 'materialize-css/dist/js/materialize.min.js';
-import trevor, { speechSynth } from './Speech/OutputSpeech';
+import alex, { speechSynth } from './Speech/OutputSpeech';
 
 const Navbar = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let sidenav = document.querySelector('#slide-out');
@@ -23,10 +21,12 @@ const Navbar = ({ history }) => {
   }, []);
 
   const navbarVoiceCommands = {
-    'go to my list': () => {
+    'get list': () => {
+      alex.text = `going to your list`;
+      speechSynth.speak(alex);
       history.push('/list');
     },
-    'go to my favorite recipes': () => {
+    'get favorite recipes': () => {
       history.push('/favoriterecipes');
     },
     'get recipes': () => {
@@ -34,24 +34,17 @@ const Navbar = ({ history }) => {
     },
     'sign out': () => {
       annyang.addCommands(reallySignOut);
-      trevor.text = 'ARE YOU SURE ABOUT THAT?';
-      speechSynth.speak(trevor);
-      setOpen(true);
+      alex.text = 'ARE YOU SURE ABOUT THAT?';
+      speechSynth.speak(alex);
     }
   };
 
   const reallySignOut = {
     'Yes sign out': () => {
-      trevor.text = 'Okay, Bye';
-      speechSynth.speak(trevor);
-      handleSignOut();
+      alex.text = 'Okay, Bye';
+      speechSynth.speak(alex);
+      auth.signOut();
     }
-  };
-
-  const handleSignOut = () => {
-    setOpen(false);
-    auth.signOut();
-    // return <Redirect to="/login" />;
   };
 
   return (
@@ -74,28 +67,12 @@ const Navbar = ({ history }) => {
                 <Link to="/favoriterecipes">Favorite Recipes</Link>
               </li>
               <li>
-                <a onClick={() => setOpen(true)}>Sign Out</a>
-                <Modal open={open} onClose={() => setOpen(false)}>
-                  <div className="container">
-                    <h4 className="center-align">Sign Out</h4>
-                    <p className="center-align">
-                      Sad to see you go, please come back soon!
-                    </p>
-                    <div className="center-align">
-                      <button
-                        className="waves-effect waves-light btn-small red"
-                        onClick={() => handleSignOut()}
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                </Modal>
+                <Link to="/signout">Sign Out</Link>
               </li>
             </ul>
           ) : (
             <div>
-              <ul>
+              <ul className="hide-on-med-and-down">
                 <li>
                   <Link to="/login">Login</Link>
                 </li>
@@ -124,20 +101,31 @@ const Navbar = ({ history }) => {
         </div>
       </nav>
 
-      <ul id="slide-out" className="sidenav">
-        <li>
-          <Link to="/list">List</Link>
-        </li>
-        <li>
-          <Link to="/recipes">Recipes</Link>
-        </li>
-        {/* <li>
-          <Link to="/profile">Profile</Link>
-        </li> */}
-        <li>
-          <Link to="/favoriterecipes">Favorite Recipes</Link>
-        </li>
-      </ul>
+      {currentUser ? (
+        <ul id="slide-out" className="sidenav">
+          <li>
+            <Link to="/list">List</Link>
+          </li>
+          <li>
+            <Link to="/recipes">Recipes</Link>
+          </li>
+          <li>
+            <Link to="/favoriterecipes">Favorite Recipes</Link>
+          </li>
+          <li className="red">
+            <Link to="/signout">Sign Out</Link>
+          </li>
+        </ul>
+      ) : (
+        <ul id="slide-out" className="sidenav">
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <Link to="/signup">Sign Up</Link>
+          </li>
+        </ul>
+      )}
     </div>
   );
 };
