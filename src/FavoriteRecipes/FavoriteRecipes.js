@@ -74,9 +74,6 @@ const FavoriteRecipes = ({ history }) => {
     }
   };
 
-  // if (loading) {
-  //   return <Spinner />;
-  // }
   return (
     <div>
       {loading ? (
