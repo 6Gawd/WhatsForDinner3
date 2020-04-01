@@ -8,14 +8,13 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
           <li className="collection-item" key={ingredient.id}>
             <div>
               {ingredient.name}
-              <button
-                className="btn-floating btn-small waves-effect waves-light red secondary-content"
-                type="button"
-                name="action"
+              <a
+                href="#!"
+                className="secondary-content"
                 onClick={() => deleteIngredient(ingredient)}
               >
-                <i className="material-icons right">delete</i>
-              </button>
+                <i className="material-icons red-text">delete</i>
+              </a>
             </div>
           </li>
         );
