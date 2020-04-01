@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-responsive-modal';
-import { navInstructions } from '../Speech/Commands'
+import { navInstructions } from '../Speech/Commands';
+
 
 const InstructionModal = ({ open, setOpen, instructions }) => {
   return (
@@ -30,6 +31,7 @@ const InstructionModal = ({ open, setOpen, instructions }) => {
       </div>
     </div>
   );
-}
+};
 
-export default InstructionModal
+export default InstructionModal;
+

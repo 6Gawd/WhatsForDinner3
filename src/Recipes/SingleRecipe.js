@@ -5,7 +5,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { addToFavoritesToast } from '../ToastNotifications/Toasts';
 import annyang from 'annyang';
-import trevor, { speechSynth } from '../Speech/OutputSpeech';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
 import RecipeStepsModal from '../Modal/RecipeStepsModal';
 
 const SingleRecipe = ({ recipe, idx }) => {
@@ -57,8 +57,8 @@ const SingleRecipe = ({ recipe, idx }) => {
         });
       });
     if (recipes.includes(id)) {
-      trevor.text = 'You already bookmarked this recipe';
-      speechSynth.speak(trevor);
+      alex.text = 'You already bookmarked this recipe';
+      speechSynth.speak(alex);
     } else {
       const newFavoriteRecipe = {
         title,
@@ -73,11 +73,11 @@ const SingleRecipe = ({ recipe, idx }) => {
         newFavoriteRecipe.steps = data[0].steps.map(step => step.step);
         addToFavoritesToast();
         await db.collection('favoriteRecipes').add(newFavoriteRecipe);
-        trevor.text = `bookmarked recipe ${idx}`;
-        speechSynth.speak(trevor);
+        alex.text = `bookmarked recipe ${idx}`;
+        speechSynth.speak(alex);
       } catch (error) {
-        trevor.text = 'unfortunately this recipe does not have instructions';
-        speechSynth.speak(trevor);
+        alex.text = 'unfortunately this recipe does not have instructions';
+        speechSynth.speak(alex);
       }
     }
   };
@@ -114,8 +114,8 @@ const SingleRecipe = ({ recipe, idx }) => {
         });
       });
     if (recipes.includes(id)) {
-      trevor.text = 'You already bookmarked this recipe';
-      speechSynth.speak(trevor);
+      alex.text = 'You already bookmarked this recipe';
+      speechSynth.speak(alex);
     } else {
       try {
         modalObject.ingredients = missedIngredients.concat(usedIngredients);

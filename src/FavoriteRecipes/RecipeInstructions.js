@@ -1,14 +1,12 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../Auth.js';
+import React, { useState, useEffect } from 'react';
 import { db } from '../base';
 import annyang from 'annyang';
-import trevor, { speechSynth } from '../Speech/OutputSpeech';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
 import { readyToBeginToast } from '../ToastNotifications/Toasts';
 import { singleFavRecipeInstructions } from '../Speech/Commands';
 import InstructionModal from '../Modal/InstructionModal';
 
 const RecipeInstructions = props => {
-  const { currentUser } = useContext(AuthContext);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedRecipe, setSelectedRecipe] = useState({
     steps: [],
@@ -21,8 +19,8 @@ const RecipeInstructions = props => {
   useEffect(() => {
     getFavoriteRecipe();
     annyang.addCommands(returnCommands());
-    trevor.text = "Let's Start Cooking, Are you Ready?";
-    speechSynth.speak(trevor);
+    alex.text = "Let's Start Cooking, Are you Ready?";
+    speechSynth.speak(alex);
     readyToBeginToast();
     return () => {
       annyang.removeCommands(Object.keys(returnCommands()));
@@ -41,8 +39,8 @@ const RecipeInstructions = props => {
         if (bool) {
           steps++;
         } else {
-          trevor.text = 'You are already on the last step';
-          speechSynth.speak(trevor);
+          alex.text = 'You are already on the last step';
+          speechSynth.speak(alex);
         }
       },
       'repeat step': () => {
@@ -53,8 +51,8 @@ const RecipeInstructions = props => {
         if (bool) {
           steps--;
         } else {
-          trevor.text = 'You are already on the first step';
-          speechSynth.speak(trevor);
+          alex.text = 'You are already on the first step';
+          speechSynth.speak(alex);
         }
       },
       'help': () => {
@@ -76,8 +74,8 @@ const RecipeInstructions = props => {
       });
     if (step < recipe.steps.length && step >= 0) {
       setCurrentStep(step);
-      trevor.text = `Step ${step + 1}. ${recipe.steps[step]}`;
-      speechSynth.speak(trevor);
+      alex.text = `Step ${step + 1}. ${recipe.steps[step]}`;
+      speechSynth.speak(alex);
       return true;
     } else {
       return false;

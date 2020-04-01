@@ -4,13 +4,13 @@ import { AuthContext } from '../Auth.js';
 import { db } from '../base';
 import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
-import trevor, { speechSynth } from '../Speech/OutputSpeech';
+import alex, { speechSynth } from '../Speech/OutputSpeech';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   addIngredientToast,
   deleteIngredientToast,
   clearListToast,
-  initTrevorToast
+  initAlexToast
 } from '../ToastNotifications/Toasts';
 import { listInstructions } from '../Speech/Commands';
 import InstructionModal from '../Modal/InstructionModal';
@@ -24,7 +24,7 @@ const List = ({ history }) => {
   useEffect(() => {
     initSpeech();
     getIngredients();
-    initTrevorToast();
+    initAlexToast();
     annyang.addCommands(initCommands);
     return () => {
       annyang.removeCommands(Object.keys(activatedCommands));
@@ -42,8 +42,8 @@ const List = ({ history }) => {
     //Adds all the activated commands
     'hey Alex': () => {
       annyang.addCommands(activatedCommands);
-      trevor.text = `at your service`;
-      speechSynth.speak(trevor);
+      alex.text = `at your service`;
+      speechSynth.speak(alex);
     },
     //Removes all the activated commands
     'Alex stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
@@ -80,13 +80,13 @@ const List = ({ history }) => {
       );
       //checks to see if ingredient is already in the User's list
       if (ingredientNames.includes(newIngredient.name.toLowerCase())) {
-        trevor.text = `You have already added this item!`;
-        speechSynth.speak(trevor);
+        alex.text = `You have already added this item!`;
+        speechSynth.speak(alex);
       } else {
         //we created a new doc in the ingredient collection
         await db.collection('ingredients').add(newIngredient);
-        trevor.text = `got ${newIngredient.name}`;
-        speechSynth.speak(trevor);
+        alex.text = `got ${newIngredient.name}`;
+        speechSynth.speak(alex);
         addIngredientToast();
         getIngredients();
         setIngredient('');
@@ -112,8 +112,8 @@ const List = ({ history }) => {
         .delete();
       await getIngredients();
       deleteIngredientToast();
-      trevor.text = `removed ${listIngredient.name}`;
-      speechSynth.speak(trevor);
+      alex.text = `removed ${listIngredient.name}`;
+      speechSynth.speak(alex);
     } catch (error) {
       console.error('Error deleting ingredient', error);
     }
@@ -134,16 +134,16 @@ const List = ({ history }) => {
         });
       await deleteIngredient(ingredient);
     } catch (error) {
-      trevor.text = `could not find ${tag}`;
-      speechSynth.speak(trevor);
+      alex.text = `could not find ${tag}`;
+      speechSynth.speak(alex);
     }
   };
 
   const clearListWithVoice = async () => {
     const currentList = await getIngredients();
     if (currentList.length < 1) {
-      trevor.text = `your list is empty`;
-      speechSynth.speak(trevor);
+      alex.text = `your list is empty`;
+      speechSynth.speak(alex);
     } else {
       //we get the User's list of ingredients and delete from DB.
       await db
@@ -157,8 +157,8 @@ const List = ({ history }) => {
               .delete();
           });
         });
-      trevor.text = `removing your list`;
-      speechSynth.speak(trevor);
+      alex.text = `removing your list`;
+      speechSynth.speak(alex);
       setIngredients([]);
       clearListToast();
     }

@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const initTrevorToast = () => {
+export const initAlexToast = () => {
   toast.info(
     'For assistance, you can say "help" at any time. Or click the help button.',
     {
@@ -81,20 +81,17 @@ export const readyToBeginToast = () => {
 };
 
 export const repeatCurrentStepsToast = () => {
-  toast.info(
-    'You can make Trevor repeat current step - " repeat current step"',
-    {
-      position: 'top-right',
-      autoClose: 10000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      draggable: true
-    }
-  );
+  toast.info('You can make Alex repeat current step - " repeat current step"', {
+    position: 'top-right',
+    autoClose: 10000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    draggable: true
+  });
 };
 
 export const nextStepsToast = () => {
-  toast.info('You can make Trevor say the next step - "go to next step"', {
+  toast.info('You can make Alex say the next step - "go to next step"', {
     position: 'top-right',
     autoClose: 10000,
     hideProgressBar: false,
@@ -105,7 +102,7 @@ export const nextStepsToast = () => {
 
 export const previousStepsToast = () => {
   toast.success(
-    'You can make Trevor say the previous step - "go to previous step"',
+    'You can make Alex say the previous step - "go to previous step"',
     {
       position: 'top-right',
       autoClose: 10000,
