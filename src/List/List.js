@@ -2,21 +2,18 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../Auth.js';
 import { db } from '../base';
-
 import ListOfIngredients from './ListOfIngredients';
 import annyang from 'annyang';
 import trevor, { speechSynth } from '../Speech/OutputSpeech';
-
 import 'react-toastify/dist/ReactToastify.css';
 import {
   addIngredientToast,
   deleteIngredientToast,
   clearListToast,
-  initTrevorToast,
+  initTrevorToast
 } from '../ToastNotifications/Toasts';
 import { listInstructions } from '../Speech/Commands';
-
-import Modal from 'react-responsive-modal';
+import InstructionModal from '../Modal/InstructionModal';
 
 const List = () => {
   const { currentUser } = useContext(AuthContext);
@@ -33,32 +30,24 @@ const List = () => {
       annyang.removeCommands(Object.keys(initCommands));
     };
   }, []);
-
+  //Annyang Voice Commands
   const activatedCommands = {
-    'add *tag': tag => {
-      addWithVoice(tag);
-    },
-    'delete *tag': tag => {
-      deleteWithVoice(tag);
-    },
+    'add *tag': tag => addWithVoice(tag),
+    'delete *tag': tag => deleteWithVoice(tag),
     'clear my list': () => clearListWithVoice()
   };
 
   const initCommands = {
     //Adds all the activated commands
-    'hey Trevor': () => {
+    'hey Alex': () => {
       annyang.addCommands(activatedCommands);
       trevor.text = `at your service`;
       speechSynth.speak(trevor);
     },
     //Removes all the activated commands
-    'trevor stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
-    'show instructions': () => {
-      setOpen(true);
-    },
-    'close instructions': () => {
-      setOpen(false);
-    }
+    'Alex stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
+    help: () => setOpen(true),
+    close: () => setOpen(false)
   };
 
   const getIngredients = async () => {
@@ -82,43 +71,46 @@ const List = () => {
     }
   };
 
-  const addIngredient = async ingredient => {
+  const addIngredient = async newIngredient => {
     try {
       const currentIngredients = await getIngredients();
-      const names = currentIngredients.map(ingredient =>
+      const ingredientNames = currentIngredients.map(ingredient =>
         ingredient.name.toLowerCase()
       );
-      if (names.includes(ingredient.name.toLowerCase())) {
+      //checks to see if ingredient is already in the User's list
+      if (ingredientNames.includes(newIngredient.name.toLowerCase())) {
         trevor.text = `You have already added this item!`;
         speechSynth.speak(trevor);
-        return false;
       } else {
-        const newIngredient = { ...ingredient };
-        await db
-          .collection('ingredients')
-          .add(ingredient)
-          .then(obj => (newIngredient.id = obj.id));
+        //we created a new doc in the ingredient collection
+        await db.collection('ingredients').add(newIngredient);
         trevor.text = `got ${newIngredient.name}`;
         speechSynth.speak(trevor);
         addIngredientToast();
-        return newIngredient;
+        getIngredients();
+        setIngredient('');
       }
     } catch (error) {
       console.error('No Ingredients', error);
     }
   };
 
+  const addWithVoice = async tag => {
+    await addIngredient({
+      name: tag,
+      userId: currentUser.uid
+    });
+  };
+
   const deleteIngredient = async listIngredient => {
     try {
+      //Delete ingredient from DB
       await db
         .collection('ingredients')
         .doc(listIngredient.id)
         .delete();
-      const updatedIngredients = ingredients.filter(
-        ingredient => ingredient.id !== listIngredient.id
-      );
+      await getIngredients();
       deleteIngredientToast();
-      setIngredients(updatedIngredients);
       trevor.text = `removed ${listIngredient.name}`;
       speechSynth.speak(trevor);
     } catch (error) {
@@ -126,51 +118,20 @@ const List = () => {
     }
   };
 
-  const handleChange = event => {
-    setIngredient(event.target.value);
-  };
-
-  const handleSubmit = async event => {
-    event.preventDefault();
-    const returnedIngredient = await addIngredient({
-      name: ingredient,
-      userId: currentUser.uid
-    });
-    if (returnedIngredient) {
-      setIngredients([...ingredients, returnedIngredient]);
-      setIngredient('');
-    }
-  };
-
-  const addWithVoice = async tag => {
-    const returned = await addIngredient({
-      name: tag,
-      userId: currentUser.uid
-    });
-    if (returned) {
-      getIngredients();
-      setIngredient('');
-    }
-  };
-
   const deleteWithVoice = async tag => {
+    //check to see if the ingredient is in the database
     try {
-      const id = await db
+      let ingredient = {};
+      await db
         .collection('ingredients')
         .where('userId', '==', currentUser.uid)
         .where('name', '==', tag)
         .get()
-        .then(doc => doc.docs[0].id);
-      if (id) {
-        await db
-          .collection('ingredients')
-          .doc(id)
-          .delete();
-        await getIngredients();
-      }
-      trevor.text = `removed ${tag}`;
-      deleteIngredientToast();
-      speechSynth.speak(trevor);
+        .then(doc => {
+          ingredient = doc.docs[0].data();
+          ingredient.id = doc.docs[0].id;
+        });
+      await deleteIngredient(ingredient);
     } catch (error) {
       trevor.text = `couldnt find ${tag}`;
       speechSynth.speak(trevor);
@@ -183,6 +144,7 @@ const List = () => {
       trevor.text = `your list is empty`;
       speechSynth.speak(trevor);
     } else {
+      //we get the User's list of ingredients and delete from DB.
       await db
         .collection('ingredients')
         .where('userId', '==', currentUser.uid)
@@ -199,6 +161,18 @@ const List = () => {
       setIngredients([]);
       clearListToast();
     }
+  };
+
+  const handleChange = event => {
+    setIngredient(event.target.value);
+  };
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+    await addIngredient({
+      name: ingredient,
+      userId: currentUser.uid
+    });
   };
 
   return (
@@ -246,24 +220,13 @@ const List = () => {
             Clear List
             <i className="tiny material-icons right">delete_sweep</i>
           </button>
-          <Modal open={open} onClose={() => setOpen(false)}>
-            <h4>Trevor's Commands</h4>
-            <ul>
-              {listInstructions.map((instruction, i) => (
-                <li key={i}>{instruction}</li>
-              ))}
-            </ul>
-          </Modal>
         </div>
       </div>
-      <div className="fixed-action-btn">
-        <a
-          className="btn-floating btn-medium amber"
-          onClick={() => setOpen(true)}
-        >
-          <i className="large material-icons">help_outline</i>
-        </a>
-      </div>
+      <InstructionModal
+        open={open}
+        setOpen={setOpen}
+        instructions={listInstructions}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, } from 'react-router-dom';
 import { AuthContext } from './Auth';
 import {auth} from './base'
 import Modal from 'react-responsive-modal';
@@ -7,12 +7,10 @@ import annyang from 'annyang';
 import M from  'materialize-css/dist/js/materialize.min.js';
 import trevor, {speechSynth}from './Speech/OutputSpeech'
 
-
 const Navbar = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
 
-  // console.log('navbar', props);
   useEffect(() => {
 		let sidenav = document.querySelector('#slide-out');
     M.Sidenav.init(sidenav);
@@ -31,12 +29,16 @@ const Navbar = ({ history }) => {
 
   const navbarVoiceCommands = {
     'go to my list': () => {
+      trevor.text = `going to your list`
+      speechSynth.speak(trevor)
       history.push('/list');
     },
     'go to my favorite recipes': () => {
       history.push('/favoriterecipes');
     },
     'go to my profile': () => {
+      trevor.text = `going to your profile`
+      speechSynth.speak(trevor)
       history.push('/profile');
     },
     'get recipes': () => {
@@ -76,18 +78,12 @@ const Navbar = ({ history }) => {
                 <Link to="/favoriterecipes">Favorite Recipes</Link>
               </li>
               <li>
-                <Link to="/profile">Sign Out</Link>
+                <Link to="/signout">Sign Out</Link>
               </li>
-              {/* // <li>
-						// 	<a className="btn-floating" onClick={() => console.log('STAY BLESSED')}>
-						// 		<i className="material-icons">help_outline</i>
-						// 	</a>
-						// </li> */}
-
             </ul>
           ) : (
             <div>
-              <ul>
+              <ul className="hide-on-med-and-down">
                 <li>
                   <Link to="/login">Login</Link>
                 </li>
@@ -116,21 +112,33 @@ const Navbar = ({ history }) => {
         </div>
       </nav>
 
+        {currentUser ? (
       <ul id="slide-out" className="sidenav">
         <li>
           <Link to="/list">List</Link>
         </li>
         <li>
-          <Link to="/recipes">Recipes</Link></li>
-        <li>
-          <Link to="/profile">Profile</Link>
+          <Link to="/recipes">Recipes</Link>
         </li>
         <li>
           <Link to="/favoriterecipes">Favorite Recipes</Link>
         </li>
+        <li className="red">
+          <Link to="/signout">Sign Out</Link>
+        </li>
+        </ul>
+        )
+        : (
+          <ul id="slide-out" className="sidenav">
+        <li>
+                  <Link to="/login">Login</Link>
+                </li>
+                <li>
+                  <Link to="/signup">Sign Up</Link>
+          </li>
       </ul>
+                )}
     </div>
-
   );
 };
 

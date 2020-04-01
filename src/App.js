@@ -1,12 +1,7 @@
 import React from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect
-} from 'react-router-dom';
-import Profile from './User/Profile';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import Signout from './User/Signout';
 import Login from './User/Login';
 import SignUp from './User/SignUp';
 import Recipes from './Recipes/Recipes';
@@ -22,33 +17,26 @@ import 'react-toastify/dist/ReactToastify.css';
 toast.configure();
 
 const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <NavBar />
-          <Switch>
-            <PrivateRoute exact path="/" component={Profile} />
-            <PrivateRoute exact path="/list" component={List} />
-            <PrivateRoute exact path="/recipes" component={Recipes} />
-            <PrivateRoute
-              exact
-              path="/favoriterecipes"
-              component={FavoriteRecipes}
-            />
-            <PrivateRoute
-              exact
-              path="/favoriterecipes/instructions/:id"
-              component={RecipeInstructions}
-            />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route render={() => <Redirect to="/" />} />
-          </Switch>
-        </div>
-      </Router>
-    </AuthProvider>
-  );
+
+	return (
+		<AuthProvider>
+			<Router>
+				<div className="App">
+					<NavBar />
+					<Switch>
+						<PrivateRoute exact path="/signout" component={Signout} />
+						<PrivateRoute exact path="/list" component={List} />
+						<PrivateRoute exact path="/recipes" component={Recipes} />
+						<PrivateRoute exact path="/favoriterecipes" component={FavoriteRecipes} />
+						<PrivateRoute exact path="/favoriterecipes/instructions/:id" component={RecipeInstructions} />
+						<Route exact path="/login" component={Login} />
+						<Route exact path="/signup" component={SignUp} />
+						<Route render={() => <Redirect to="/list" />} />
+					</Switch>
+				</div>
+			</Router>
+		</AuthProvider>
+	);
 };
 
 export default App;

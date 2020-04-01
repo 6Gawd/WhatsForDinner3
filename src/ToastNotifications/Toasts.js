@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const initTrevorToast = () => {
   toast.info(
-    'For assistance, you can say "Show Instructions" on every page',
+    'For assistance, you can say "help" at any time!',
     {
       position: 'bottom-left',
       autoClose: 6000,

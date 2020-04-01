@@ -1,22 +1,24 @@
 import annyang from 'annyang';
 
 export const listInstructions = [
-  'In order to activate Trevor on our app, you begin by saying "hey Trevor"',
+  'In order to activate Alex on our app, you begin by saying "hey Alex"',
   'You can add any food item you like to your list. Say "add Cheese"',
   'You can also delete any food item off of your list. Say "delete Cheese"',
   'If you want to clear your current shopping list, say "clear my list"',
   'If you want to get some recipes using your current shopping list, say "get recipes"',
   'If you want to go to your favorite recipes, say "get favorite recipes"',
-  'Say "close instructions" to close this window'
+  'Say "close" to close this window'
 ];
 
 export const recipesInstructions = [
-  'To add a new recipe to your favorites, say "bookmark recipe number (corresponding recipe number)"'
-
+  'To add a new recipe to your favorites, say "bookmark recipe number (corresponding recipe number)"',
+  'To show steps for a recipe, say "steps for recipe number (corresponding recipe number)"',
+  'To close steps for a recipe, say "close number (corresponding recipe number)"'
 ]
 
 export const favRecipeInstructions = [
-  'To see recipe instructions, say "Start cooking recipe (corresponding recipe number)"'
+  'To see recipe instructions, say "Start cooking recipe (corresponding recipe number)"',
+  'To delete a recipe, say "delete recipe (corresponding recipe number)"'
 ]
 
 export const singleFavRecipeInstructions = [
