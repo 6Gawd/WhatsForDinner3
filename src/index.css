@@ -58,3 +58,8 @@ input {
   overflow: inherit;
 }
 
+#init-speech {
+    background: transparent;
+    border: none !important;
+    font-size:0;
+}

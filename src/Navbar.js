@@ -28,18 +28,13 @@ const Navbar = ({ history }) => {
   // }, [])
 
   const navbarVoiceCommands = {
-    'go to my list': () => {
+    'get list': () => {
       trevor.text = `going to your list`
       speechSynth.speak(trevor)
       history.push('/list');
     },
-    'go to my favorite recipes': () => {
+    'get favorite recipes': () => {
       history.push('/favoriterecipes');
-    },
-    'go to my profile': () => {
-      trevor.text = `going to your profile`
-      speechSynth.speak(trevor)
-      history.push('/profile');
     },
     'get recipes': () => {
       history.push('/recipes');
@@ -50,6 +45,7 @@ const Navbar = ({ history }) => {
 			speechSynth.speak(trevor)
 		}
 	};
+
 	const reallySignOut = {
 		'Yes sign out': ()=>{
 			trevor.text="Okay, Bye"

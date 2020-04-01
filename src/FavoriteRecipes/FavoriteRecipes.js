@@ -5,9 +5,9 @@ import RecipeDisplay from './RecipeDisplay';
 import 'react-toastify/dist/ReactToastify.css';
 import { removeFromFavoritesToast } from '../ToastNotifications/Toasts';
 import { favRecipeInstructions } from '../Speech/Commands';
-import InstructionModal from '../Modal/InstructionModal'
+import InstructionModal from '../Modal/InstructionModal';
 import annyang from 'annyang';
-import trevor, { speechSynth} from '../Speech/OutputSpeech'
+import trevor, { speechSynth } from '../Speech/OutputSpeech';
 
 const FavoriteRecipes = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
@@ -18,14 +18,14 @@ const FavoriteRecipes = ({ history }) => {
     annyang.addCommands(instructionsCommands);
     getFavoriteRecipes();
 
-		return () => {
-			annyang.removeCommands(Object.keys(instructionsCommands))
-		}
+    return () => {
+      annyang.removeCommands(Object.keys(instructionsCommands));
+    };
   }, []);
 
   const instructionsCommands = {
-    'help': () => setOpen(true),
-    'close': () => setOpen(false)
+    help: () => setOpen(true),
+    close: () => setOpen(false)
   };
 
   const getFavoriteRecipes = async () => {
@@ -42,7 +42,14 @@ const FavoriteRecipes = ({ history }) => {
             recipes.push(item);
           });
         });
-      setRecipes(recipes);
+      if (recipes.length > 0) {
+        trevor.text = `Loading your favorite recipes`;
+        speechSynth.speak(trevor);
+        setRecipes(recipes);
+      } else {
+        trevor.text = `please bookmark some recipes first`;
+        speechSynth.speak(trevor);
+      }
     } catch (error) {
       console.error('No Recipes', error);
     }
@@ -55,10 +62,10 @@ const FavoriteRecipes = ({ history }) => {
         .doc(recipeId)
         .delete();
       // const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
-			// setRecipes(updatedRecipes);
-			await getFavoriteRecipes()
-      trevor.text = `removed from favorites`
-      speechSynth.speak(trevor)
+      // setRecipes(updatedRecipes);
+      await getFavoriteRecipes();
+      trevor.text = `removed from favorites`;
+      speechSynth.speak(trevor);
       removeFromFavoritesToast();
     } catch (error) {
       console.error('Error deleting recipe', error);
@@ -76,7 +83,7 @@ const FavoriteRecipes = ({ history }) => {
                 recipes.map((recipe, idx) => (
                   <RecipeDisplay
                     key={recipe.id}
-                    idx={idx+1}
+                    idx={idx + 1}
                     recipe={recipe}
                     history={history}
                     removeFromFavorites={removeFromFavorites}
