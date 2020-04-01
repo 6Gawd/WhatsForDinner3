@@ -96,7 +96,8 @@ const SingleRecipe = ({ recipe, idx }) => {
       selectedRecipe.steps = data[0].steps.map(step => step.step);
       setModalInstructions(selectedRecipe);
     } catch (error) {
-      console.log('No Recipe', error);
+      alex.text = 'unfortunately this recipe does not have instructions';
+      speechSynth.speak(alex);
     }
   };
 
@@ -134,11 +135,11 @@ const SingleRecipe = ({ recipe, idx }) => {
           <div className="card-image">
             <img src={image} alt={title} />
             <span className="card-title">
-              <a className="btn-floating halfway-fab waves-effect waves-light blue left">
+              <a className="btn-floating halfway-fab waves-effect blue left">
                 {idx}
               </a>
             </span>
-            <a className="btn-floating halfway-fab waves-effect waves-light red">
+            <a className="btn-floating halfway-fab waves-effect red">
               <i className="material-icons" onClick={addRecipeToFavorite}>
                 favorite
               </i>
