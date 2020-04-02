@@ -13,7 +13,7 @@ const ListOfIngredients = ({ ingredients, deleteIngredient }) => {
                 className="secondary-content"
                 onClick={() => deleteIngredient(ingredient)}
               >
-                <i className="material-icons red-text">delete</i>
+                <i className="material-icons red-text">delete_forever</i>
               </a>
             </div>
           </li>

@@ -32,6 +32,14 @@ const List = ({ history }) => {
     };
   }, []);
   //Annyang Voice Commands
+
+  const greetings = [
+    'Alex here',
+    'Awaiting Instructions',
+    'At your service, Master',
+    'Ready for rumble',
+    'Let'
+  ];
   const activatedCommands = {
     'add *tag': tag => addWithVoice(tag),
     'delete *tag': tag => deleteWithVoice(tag),
@@ -177,12 +185,11 @@ const List = ({ history }) => {
   };
 
   const initSpeech = () => {
-    document.getElementById('init-speech').click();
+    document.querySelector('button').click();
   };
 
   return (
     <div className="card-padding">
-      <button id="init-speech"></button>
       <div className="container">
         <div className="card-panel">
           <h1 className="center-align">Your Shopping List</h1>
@@ -204,7 +211,7 @@ const List = ({ history }) => {
                     />
                   </div>
                   <button
-                    className="btn waves-effect waves-light indigo center"
+                    className="btn waves-effect indigo center"
                     type="submit"
                     name="action"
                   >
@@ -219,7 +226,7 @@ const List = ({ history }) => {
           </form>
           <div className="container">
             <button
-              className="btn waves-effect waves-light green center"
+              className="btn waves-effect green center"
               type="submit"
               name="action"
               onClick={() => history.push('/recipes')}
@@ -231,7 +238,7 @@ const List = ({ history }) => {
           <br />
           <div className="container">
             <button
-              className="btn waves-effect waves-light red center"
+              className="btn waves-effect red center"
               type="submit"
               name="action"
               onClick={() => clearListWithVoice()}

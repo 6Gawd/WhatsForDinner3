@@ -55,10 +55,10 @@ const RecipeInstructions = props => {
           speechSynth.speak(alex);
         }
       },
-      help: () => {
+      'help': () => {
         setOpen(true);
       },
-      close: () => {
+      'close': () => {
         setOpen(false);
       }
     };

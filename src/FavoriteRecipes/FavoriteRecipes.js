@@ -100,6 +100,7 @@ const FavoriteRecipes = ({ history }) => {
                   )}
                 </div>
               </div>
+
             </div>
           </div>
           <InstructionModal
