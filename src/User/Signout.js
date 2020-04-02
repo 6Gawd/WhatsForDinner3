@@ -4,7 +4,7 @@ import annyang from 'annyang';
 import Modal from 'react-responsive-modal';
 import { profileInstructions } from '../Speech/Commands';
 
-const Signout = () => {
+const Signout = ({ history }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -15,13 +15,17 @@ const Signout = () => {
   }, []);
 
   const signOut = {
-    'sign out': () => auth.signOut(),
-    'show instructions': () => {
+    help: () => {
       setOpen(true);
     },
-    'close instructions': () => {
+    close: () => {
       setOpen(false);
     }
+  };
+
+  const handleSignout = () => {
+    history.push('/login');
+    auth.signOut();
   };
 
   return (
@@ -30,7 +34,7 @@ const Signout = () => {
         <p>Do you really want to sign out?</p>
         <button
           className="waves-effect waves-light btn-small red"
-          onClick={() => auth.signOut()}
+          onClick={() => handleSignout()}
         >
           Sign out
         </button>

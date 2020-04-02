@@ -11,7 +11,7 @@ const Login = ({ history }) => {
       const { email, password } = event.target.elements;
       try {
         await auth.signInWithEmailAndPassword(email.value, password.value);
-        history.push('/list');
+        history.push('/');
       } catch (error) {
         alert(error);
       }
@@ -22,7 +22,7 @@ const Login = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
-    return <Redirect to="/list" />;
+    return <Redirect to="/login" />;
   }
 
   return (

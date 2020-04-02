@@ -53,6 +53,10 @@ input {
   padding-top: 50px;
 }
 
+.home-padding {
+  padding-top: 180px;
+}
+
 .card-text {
   font-size: 0.85em;
 }
@@ -66,4 +70,13 @@ input {
   background: transparent;
   border: none !important;
   font-size: 0;
+}
+
+input:focus {
+  border-bottom: 1px solid #3f51b5 !important;
+  box-shadow: 0 1px 0 0 #3f51b5 !important;
+}
+
+.styles_closeButton__20ID4 {
+  background-color: #3f51b5 !important;
 }
