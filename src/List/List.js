@@ -23,8 +23,8 @@ const List = ({ history }) => {
 
   useEffect(() => {
     // initSpeech();
-    initGreet();
     getIngredients();
+    initGreet();
     initAlexToast();
     annyang.addCommands(initCommands);
     return () => {
@@ -172,10 +172,6 @@ const List = ({ history }) => {
       userId: currentUser.uid
     });
   };
-
-  // const initSpeech = () => {
-  //   document.querySelector('button').click();
-  // };
 
   return (
     <div className="card-padding">
