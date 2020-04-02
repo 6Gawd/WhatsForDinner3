@@ -2,7 +2,7 @@ import React from 'react';
 
 const Spinner = () => {
   return (
-    <div className="container">
+    <div className="container card-padding">
       <div className="card-panel">
         <div className="preloader-wrapper big active">
           <div className="spinner-layer spinner-blue">

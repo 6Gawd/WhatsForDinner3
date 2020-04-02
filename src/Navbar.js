@@ -43,10 +43,10 @@ const Navbar = ({ history }) => {
     'Yes sign out': () => {
       alex.text = 'Okay, Bye';
       speechSynth.speak(alex);
+      history.push('/login');
       auth.signOut();
     }
   };
-
 
   return (
     <div>
@@ -103,6 +103,9 @@ const Navbar = ({ history }) => {
       </nav>
       {currentUser ? (
         <ul id="slide-out" className="sidenav">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
           <li>
             <Link to="/list">List</Link>
           </li>

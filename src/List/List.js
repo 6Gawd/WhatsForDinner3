@@ -12,7 +12,7 @@ import {
   clearListToast,
   initAlexToast
 } from '../ToastNotifications/Toasts';
-import { listInstructions } from '../Speech/Commands';
+import { listInstructions, greetings } from '../Speech/Commands';
 import InstructionModal from '../Modal/InstructionModal';
 
 const List = ({ history }) => {
@@ -22,39 +22,28 @@ const List = ({ history }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    initSpeech();
+    // initSpeech();
+    initGreet();
     getIngredients();
     initAlexToast();
     annyang.addCommands(initCommands);
     return () => {
-      annyang.removeCommands(Object.keys(activatedCommands));
       annyang.removeCommands(Object.keys(initCommands));
     };
   }, []);
   //Annyang Voice Commands
 
-  const greetings = [
-    'Alex here',
-    'Awaiting Instructions',
-    'At your service, Master',
-    'Ready for rumble',
-    'Let'
-  ];
-  const activatedCommands = {
-    'add *tag': tag => addWithVoice(tag),
-    'delete *tag': tag => deleteWithVoice(tag),
-    'clear my list': () => clearListWithVoice()
+  const initGreet = () => {
+    alex.text = greetings[Math.round(Math.random() * 11)];
+    speechSynth.speak(alex);
   };
 
   const initCommands = {
     //Adds all the activated commands
-    'hey Alex': () => {
-      annyang.addCommands(activatedCommands);
-      alex.text = `at your service`;
-      speechSynth.speak(alex);
-    },
+    'add *tag': tag => addWithVoice(tag),
+    'delete *tag': tag => deleteWithVoice(tag),
+    'clear my list': () => clearListWithVoice(),
     //Removes all the activated commands
-    'Alex stop': () => annyang.removeCommands(Object.keys(activatedCommands)),
     help: () => setOpen(true),
     close: () => setOpen(false)
   };
@@ -184,9 +173,9 @@ const List = ({ history }) => {
     });
   };
 
-  const initSpeech = () => {
-    document.querySelector('button').click();
-  };
+  // const initSpeech = () => {
+  //   document.querySelector('button').click();
+  // };
 
   return (
     <div className="card-padding">
