@@ -1,82 +1,84 @@
 html {
-  background-image: url('/background.jpg');
-  background-repeat: repeat;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+	background-image: url('/background.jpg');
+	background-repeat: repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+		'Droid Sans', 'Helvetica Neue', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 label {
-  display: block;
-  margin-bottom: 10px;
+	display: block;
+	margin-bottom: 10px;
 }
 
 input {
-  margin-left: 10px;
+	margin-left: 10px;
 }
 
 .img-resize {
-  height: 500px;
-  object-fit: cover;
+	height: 500px;
+	object-fit: cover;
 }
 
 .card.large .card-image {
-  max-height: 60%;
-  overflow: inherit;
+	max-height: 60%;
+	overflow: inherit;
 }
 
 .instructions-text {
-  padding-left: 10px;
-  padding-bottom: 10px;
-  padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	padding-right: 10px;
 }
 
 .card-padding {
-  padding-top: 50px;
+	padding-top: 50px;
 }
 
 .home-padding {
-  padding-top: 180px;
+	padding-top: 180px;
 }
 
 .card-text {
-  font-size: 0.85em;
+	font-size: 0.85em;
 }
 
 .card.medium .card-image {
-  max-height: 60%;
-  overflow: inherit;
+	max-height: 60%;
+	overflow: inherit;
 }
 
 #init-speech {
-  background: transparent;
-  border: none !important;
-  font-size: 0;
+	background: transparent;
+	border: none !important;
+	font-size: 0;
 }
 
 input:focus {
-  border-bottom: 1px solid #3f51b5 !important;
-  box-shadow: 0 1px 0 0 #3f51b5 !important;
+	border-bottom: 1px solid #3f51b5 !important;
+	box-shadow: 0 1px 0 0 #3f51b5 !important;
 }
 
 .styles_closeButton__20ID4 {
-  background-color: #3f51b5 !important;
+	background-color: #3f51b5 !important;
+}
+
+.instructions-font {
+	color: #3f51b5 !important;
 }
