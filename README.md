@@ -29,7 +29,7 @@
 ![](public/SiteNavigationAndHelp.gif)
 #### Add/Delete Items from Shopping List
 ###### Our assistant Alex can also help you add or delete items to your shopping list by simply telling him what to do. You can say "Add cheese" or "Delete cheese" for example.
-![](GIFs/AddAndDeleteList.gif)
+![](public/AddAndDeleteList.gif)
 #### Clearing your Shopping List
 ###### You can also clear your shopping list by saying "clear list".
 ![](public/ClearedList.gif)
