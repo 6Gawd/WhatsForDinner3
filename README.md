@@ -38,7 +38,7 @@
 ![](public/GetRecipes.gif)
 #### Getting Favorite Recipes
 ###### You can also say "Bookmark recipe [recipe number]" to have Alex add the recipe to your favorite recipes.
-![](public/FavoriteRecipes.gif)
+![](public/AddToFavorites.gif)
 #### Reading Instructions
 ###### Alex is a great help in the kitchen as well. He can read the steps to the recipe for you. Tell him "Let's start cooking [recipe number]" to get started. He will provide a new page with instructions and some new commands available. Say "Yes I am" to get started. If you would like to go to the next step say "Next Step". You can also ask him to "Repeat Step" or go back by saying "Previous Step".
 ![](public/FavoriteRecipes.gif)
