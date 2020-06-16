@@ -3,7 +3,6 @@ import { withRouter, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { auth } from '../base.js';
 import { AuthContext } from '../Auth.js';
-
 const Login = ({ history }) => {
   const handleLogin = useCallback(
     async (event) => {
@@ -18,13 +17,22 @@ const Login = ({ history }) => {
     },
     [history]
   );
-
+  const demo = useCallback(
+    async (event) => {
+      event.preventDefault();
+      try {
+        await auth.signInWithEmailAndPassword('demo@email.com', '123456');
+        history.push('/');
+      } catch (error) {
+        alert(error);
+      }
+    },
+    [history]
+  );
   const { currentUser } = useContext(AuthContext);
-
   if (currentUser) {
     return <Redirect to="/" />;
   }
-
   return (
     <div className="container card-padding">
       <div className="card-panel">
@@ -49,11 +57,14 @@ const Login = ({ history }) => {
           New User? <Link to="/signup">Sign Up</Link>
         </h6>
         <h8>
-          Or prefer a demo? Try the following credentials:
-          <br />
-          <strong>Email:</strong> demo@email.com
-          <br />
-          <strong>Password:</strong> 123456
+          Or prefer a demo?{' '}
+          <button
+            type="submit"
+            className="waves-effect waves-light btn-small indigo"
+            onClick={demo}
+          >
+            Click Me
+          </button>
         </h8>
       </div>
       <div className="card-panel">
@@ -70,5 +81,4 @@ const Login = ({ history }) => {
     </div>
   );
 };
-
 export default withRouter(Login);
